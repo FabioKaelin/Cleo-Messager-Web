@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{title}</title>
+</head>
+<body>
+    <h1>{title}</h1>
+    IP: <b>{localIP}</b>
+    <br>
+    Name: <b>{name}</b>
+    <br>
+    <h2>Sender</h2>
+    <form id="sendForm" method="get" action="/send">
+        Empfänger: <input type="text" onchange="aktualisieren()" id="empfang" name="empfang" placeholder="{oldEmpfang}"><br>
+        Nachricht: <input type="text" onchange="aktualisieren()" id="nachricht" name="nachricht"><br>
+        <input type="hidden" name="lastUpdate" id="lastUpdate"></input>
+        <!-- type="submit" -->
+        <!-- <button type="submit" onclick="send()" >Submit</button> -->
+    </form>
+    <button onclick="submitEmpty()" >Submit2</button>
+
+    <h2>Empfänger</h2>
+    <div id="empfangMessage">
+        {empfangMessage}
+    </div>
+</body>
+
+<script>
+    let aktualisieren = function(){
+        document.getElementById("lastUpdate").value = Date.now()
+    }
+
+    let submitEmpty = function(){
+        let empfang = document.getElementById("empfang").value;
+        let nachricht = document.getElementById("nachricht").value;
+        let lastUpdate = document.getElementById("lastUpdate").value;
+        if(empfang != "" && nachricht != ""){
+            let form = document.getElementById("sendForm");
+            form.setAttribute("action", "/send")
+            form.setAttribute("method", "post")
+            form.submit();
+            submit1();
+        }
+        // $_POST['empfang'] = null
+        // document.getElementById("sendForm").submit();
+        // document.getElementById("sendForm").reset();
+    }
+</script>
+</html>
