@@ -3,7 +3,7 @@ import random
 from flask import Flask, jsonify, redirect, render_template, session, url_for
 from flask import request
 from flask import *
-from turbo_flask import Turbo
+# from turbo_flask import Turbo
 import os
 import socket
 import sys
@@ -36,7 +36,7 @@ oldUpdate = "1"
 
 app = Flask(__name__)
 app.secret_key = b'kdue#-_1adf'
-turbo = Turbo(app)
+# turbo = Turbo(app)
 
 
 # def update_load():
@@ -48,6 +48,10 @@ turbo = Turbo(app)
 # @app.before_first_request
 # def before_first_request():
 #     threading.Thread(target=update_load).start()
+
+
+messages = [("Fabio", "hallo du"),("Chris", "ich mag python")]
+
 
 @app.route("/")
 def index():
@@ -100,18 +104,21 @@ def send():
     # indexContent = indexContent.replace("{name}", name)
     return indexContent
 
+
+
+
 @app.route("/empfang")
 def empfang():
-    if ('name' not in session):
-        name = request.args.get("name", "")
-        session['name'] = name
+    global messages
+    # if ('name' not in session):
+    #     name = request.args.get("name", "")
+    #     session['name'] = name
 
     if ('messages' not in session):
-        messages = [("Fabio", "hallo du"),("Chris", "ich mag python")]
         session['messages'] = messages
     if ('messages' in session):
-        empfang = request.args.get("empfang", "")
-        nachricht = request.args.get("nachricht", "")
+        # empfang = request.args.get("empfang", "")
+        # nachricht = request.args.get("nachricht", "")
         text = ""
 
         for message in reversed(session["messages"]):
@@ -123,11 +130,11 @@ def empfang():
         indexContent = f.read()
         indexContent = indexContent.replace("{title}", "Cleo-Messager")
         indexContent = indexContent.replace("{localIP}", session['local_ip'])
-        indexContent = indexContent.replace("{name}", session['name'])
+        # indexContent = indexContent.replace("{name}", session['name'])
         indexContent = indexContent.replace("{empfangMessage}", text)
-        if nachricht!= "" and empfang != "":
-            print("Es wird eine Nachricht gesendet")
-            sendMessage(nachricht, empfang, name)
+        # if nachricht!= "" and empfang != "":
+        #     print("Es wird eine Nachricht gesendet")
+        #     sendMessage(nachricht, empfang, name)
         return indexContent
     return "Keine Nachrichten"
 
@@ -159,6 +166,66 @@ def stat():
 #         load = [int(random.random() * 100) / 100 for _ in range(3)]
 #     return {'load1': load[0], 'load5': load[1], 'load15': load[2]}
 
+
+
+
+def server():
+    global messages
+    s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+    s.connect(("8.8.8.8", 80))
+    local_ip = s.getsockname()[0]
+    del s
+    port = 9898
+    buffer = 1024
+    # try:
+    while True:
+        sserver = socket.socket()
+        sserver.bind((local_ip, port))
+        sserver.listen()
+        client_socket, address = sserver.accept()
+
+        message = ""
+        while True:
+            text = client_socket.recv(buffer).decode()
+            message += text
+            if  end in text:
+                break
+        message = message.replace(end, "")
+        # print(message)
+        if (exitTag in message and address[0] == local_ip):
+            if (address[0] == local_ip):
+
+                message = message.replace(exitTag, "")
+                message = message.replace(logoutTag, "")
+                message = message.replace(sep, "")
+                message = message.replace(nameTag, "")
+                message = message.replace(messageTag, "")
+                print(message + " ist ausgeloggt und das Programm wird beendet")
+                exit()
+        if (logoutTag in message):
+            message = message.replace(exitTag, "")
+            message = message.replace(logoutTag, "")
+            message = message.replace(sep, "")
+            message = message.replace(messageTag, "")
+            message = message.replace(nameTag, "")
+            print(message + " ist ausgeloggt")
+        if (messageTag in message):
+            message = message.replace(messageTag, "")
+            messagesplit = message.split(sep)
+            client_socket.close()
+            sserver.close()
+            print(messagesplit[0] + ": " + messagesplit[1])
+            messages.append((messagesplit[0], messagesplit[1]))
+        del sserver
+        del client_socket
+        del address
+    # except:
+    #     print("")
+    #     print("Ende")
+
+
+# y = threading.Thread(target=server)
+# y.start()
 
 def sendMessage(message, empfang, name):
     s = socket.socket()
@@ -810,5 +877,4 @@ if __name__ == "__main__":
 #         print("Eine Nachricht wird benötigt")
 # # except:
 # #     print("Ende")
-
 
