@@ -4,13 +4,16 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{title}</title>
+    <title>{{data[0]}}</title>
 </head>
 <body>
-    <h1>{title}</h1>
-    IP: <b>{localIP}</b>
+    <h1>{{data[0]}}</h1>
+    <form action="/exit">
+        <input type="submit" value="Exit" />
+    </form>
+    IP: <b>{{data[1]}}</b>
     <br>
-    Name: <b>{name}</b>
+    Name: <b>{{data[2]}}</b>
     <br>
     <h2>Sender</h2>
     <form id="sendForm" method="get" action="/send">
@@ -26,12 +29,54 @@
     <div id="empfangMessage">
         {empfangMessage}
     </div> -->
+
+
+    <div id="place_for_empfang"></div>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+
+<script>
+let reloadEmpfang = function(){
+    setTimeout(function(){
+        $.ajax({
+            url: "/empfang",
+            type: "get",
+            success: function(response) {
+                $("#place_for_empfang").html(response);
+            },
+            error: function(xhr) {
+            //Do Something to handle error
+            }
+        });
+
+        reloadEmpfang()
+    },2000)
+}
+
+$.ajax({
+    url: "/empfang",
+    type: "get",
+    success: function(response) {
+        $("#place_for_empfang").html(response);
+    },
+    error: function(xhr) {
+    //Do Something to handle error
+    }
+});
+reloadEmpfang();
+</script>
 </body>
 
 <script>
     let aktualisieren = function(){
         document.getElementById("lastUpdate").value = Date.now()
     }
+
+//     window.onbeforeunload = confirmExit;
+//     function confirmExit(){
+//         alert("confirm exit is being called");
+//     return false;
+// }
 
     let submitEmpty = function(){
         let empfang = document.getElementById("empfang").value;

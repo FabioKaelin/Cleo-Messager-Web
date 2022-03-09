@@ -2,7 +2,8 @@ import socket
 import os
 import threading
 import time
-
+import codecs
+import sys
 
 end = "#END#"
 sep = "#SEP#"
@@ -12,6 +13,7 @@ nameAnswerTag = "#NAMEANSWER#"
 messageTag = "#MES#"
 logoutTag = "#LOGOUT#"
 name = "unbekannt"
+# print("start")
 
 def get_ip_address(empfang):
     s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
@@ -34,7 +36,7 @@ def sayIP9898():
                 s.close()
         except:
             x = "a"
-    print("IP geteilt - Port:9898")
+    # print("IP geteilt - Port:9898")
 
 def sayIP9899():
     for x in range(2, 255):
@@ -50,7 +52,7 @@ def sayIP9899():
             s.close()
         except:
             x = "a"
-    print("IP geteilt - Port:9899")
+    # print("IP geteilt - Port:9899")
 
 
 
@@ -76,15 +78,19 @@ def server():
         sserver.bind((local_ip, port))
         sserver.listen()
         client_socket, address = sserver.accept()
+        # print("Hallo")
 
         message = ""
         while True:
             text = client_socket.recv(buffer).decode()
+            # print(text)
             message += text
             if  end in text:
                 break
+        # print(message)
         message = message.replace(end, "")
         # print(message)
+        # print("exitTag: "+ str(exitTag) + "|||message: " + str(message) + "|||address[0]: " + str(address[0]) + "|||local_ip: " + str(local_ip))
         if (exitTag in message and address[0] == local_ip):
             if (address[0] == local_ip):
 
@@ -93,7 +99,7 @@ def server():
                 message = message.replace(sep, "")
                 message = message.replace(nameTag, "")
                 message = message.replace(messageTag, "")
-                print(message + " ist ausgeloggt und das Programm wird beendet")
+                # print(message + " ist ausgeloggt und das Programm wird beendet")
                 exit()
         if (logoutTag in message):
             message = message.replace(exitTag, "")
@@ -101,18 +107,18 @@ def server():
             message = message.replace(sep, "")
             message = message.replace(messageTag, "")
             message = message.replace(nameTag, "")
-            print(message + " ist ausgeloggt")
+            # print(message + " ist ausgeloggt")
 
         if (messageTag in message):
             message = message.replace(messageTag, "")
             messagesplit = message.split(sep)
             client_socket.close()
             sserver.close()
-            print(messagesplit[0] + ": " + messagesplit[1])
-            f = open("./text.txt", "r")
-            content = f.read();
+            # print(messagesplit[0] + ": " + messagesplit[1])
+            f = codecs.open(sys.argv[1]+"/text.txt", "r", "utf-8")    # suess_sweet.txt file contains two
+            content = f.read()                          # comma-separated words: süß, sweet
             f.close()
-            f = open("./text.txt", "w")
+            f = codecs.open(sys.argv[1]+"/text.txt", "w", 'utf-8')
             f.write(content + "\n" + messagesplit[0] + ": " + messagesplit[1])
             f.close()
         elif (nameTag in message):
@@ -136,11 +142,11 @@ def server():
                     y9898 = threading.Thread(target=answerName, args=(address[0],9898,))
                     y9898.start()
 
-            print(address[0] + " ist " + message)
+            # print(address[0] + " ist " + message)
         elif (nameAnswerTag in message):
             message = message.replace(sep, "")
             message = message.replace(nameAnswerTag, "")
-            print(address[0] + " ist " + message)
+            # print(address[0] + " ist " + message)
 
         del sserver
         del client_socket
@@ -153,9 +159,10 @@ def server():
 s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 s.connect(("8.8.8.8", 80))
 local_ip = s.getsockname()[0]
-print("Eigene IP: " + local_ip)
-
+# print("Eigene IP: " + local_ip)
 del s
+# local_ip = "10.80.4.124"
+# print("Eigene IP: " + local_ip)
 
 x = threading.Thread(target=server)
 x.start()
