@@ -102,12 +102,19 @@ def server():
             message = message.replace(messageTag, "")
             message = message.replace(nameTag, "")
             print(message + " ist ausgeloggt")
+
         if (messageTag in message):
             message = message.replace(messageTag, "")
             messagesplit = message.split(sep)
             client_socket.close()
             sserver.close()
             print(messagesplit[0] + ": " + messagesplit[1])
+            f = open("./text.txt", "r")
+            content = f.read();
+            f.close()
+            f = open("./text.txt", "w")
+            f.write(content + "\n" + messagesplit[0] + ": " + messagesplit[1])
+            f.close()
         elif (nameTag in message):
             message = message.replace(sep, "")
             message = message.replace(nameTag, "")

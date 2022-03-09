@@ -13,6 +13,8 @@ import codecs
 import sqlite3
 import threading
 
+from pkg_resources import Environment
+
 # ...
 
 
@@ -35,6 +37,7 @@ oldUpdate = "1"
 
 
 app = Flask(__name__)
+app.config['ENVIRONMENT'] = "development"
 app.secret_key = b'kdue#-_1adf'
 # turbo = Turbo(app)
 
@@ -55,12 +58,13 @@ messages = [("Fabio", "hallo du"),("Chris", "ich mag python")]
 
 @app.route("/")
 def index():
-    s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-    s.connect(("8.8.8.8", 80))
-    local_ip = s.getsockname()[0]
+    # s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+    # s.connect(("8.8.8.8", 80))
+    # local_ip = s.getsockname()[0]
+    local_ip = request.remote_addr
     session['local_ip'] = local_ip
-    s.close()
-    del s
+    # s.close()
+    # del s
     if ('name' in session):
         return redirect(url_for('send'))
     f = codecs.open("./templates/login.html", "r", "utf-8")
@@ -264,7 +268,7 @@ def fahrenheit_from(celsius):
         return "invalid input"
 
 if __name__ == "__main__":
-    app.run(host="127.0.0.1", port=8080, debug=True)
+    app.run(host="10.80.4.124", port=8080, debug=True)
 
 
 
