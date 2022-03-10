@@ -1,0 +1,9 @@
+{"Sender": "Fabio1", "Message": "Hallo1 du"}
+{"Sender": "Fabio2", "Message": "Hallo2 du"}
+{"Sender": "Fabio3", "Message": "Hallo3 du"}
+{"Sender": "Fabio4", "Message": "Hallo4 du"}
+{"Register": "Fabio4", "IP": "10.80.4.124"}
+{"Sender": "Fabio1234", "Message": "Hallo ich bin Fabio"}
+{"Sender": "Fabio", "Message": "asdf"}
+{"Sender": "Fabio", "Message": "asdf"}
+{"Sender": "Fabio", "Message": "öasdfjöakddföaf"}

@@ -4,6 +4,9 @@ import random
 from flask import Flask, jsonify, redirect, render_template, session, url_for
 from flask import request
 from flask import *
+import json
+import codecs
+import os
 # from turbo_flask import Turbo
 import os
 import socket
@@ -13,6 +16,8 @@ import time
 import codecs
 import threading
 from multiprocessing import Process
+import webbrowser
+import pyautogui
 
 sep = "#SEP#"
 end = "#END#"
@@ -28,7 +33,7 @@ notende = True
 oldUpdate = "1"
 name = oldName
 messages = [("Fabio", "hallo du"),("Chris", "ich mag python")]
-timestamp1 = "?"
+timestamp1 = datetime.now()
 
 
 def logoutIP9898():
@@ -73,26 +78,29 @@ def getIP():
     return s.getsockname()[0]
 
 def sendMessage(message, empfang, name):
-    s = socket.socket()
-    # print(empfang)
-    # print(port)
-    # print(s)
-    s.connect((empfang, port))
-    s.send(bytes(messageTag, 'UTF-8'))
-    s.send(bytes(name, 'UTF-8'))
+    try:
+        s = socket.socket()
+        # print(empfang)
+        # print(port)
+        # print(s)
+        s.connect((empfang, port))
+        s.send(bytes(messageTag, 'UTF-8'))
+        s.send(bytes(name, 'UTF-8'))
 
-    s.send(bytes(sep, 'UTF-8'))
-    oldMessage = message
+        s.send(bytes(sep, 'UTF-8'))
+        oldMessage = message
 
-    while True:
-        message_bytes = message[:buffer]
-        message = message[buffer:]
-        if message_bytes == "":
-            s.sendall(bytes(end, 'UTF-8'))
-            break
-        s.sendall(bytes(message_bytes, 'UTF-8'))
-    s.close()
-    return oldMessage
+        while True:
+            message_bytes = message[:buffer]
+            message = message[buffer:]
+            if message_bytes == "":
+                s.sendall(bytes(end, 'UTF-8'))
+                break
+            s.sendall(bytes(message_bytes, 'UTF-8'))
+        s.close()
+        return oldMessage
+    except:
+        return message
 
 def execCollector():
     os.system("python " + os.path.dirname(os.path.abspath(__file__)) + "/collector.py "+ os.path.dirname(os.path.abspath(__file__)))
@@ -109,10 +117,26 @@ def timeController():
             os.system("taskkill /F /IM python3.9.exe")
         time.sleep(3)
 
+def sayIP9898():
+    try:
+        host = getIP()
+        s = socket.socket()
+        # s.settimeout(0.001)
+        s.connect((host, 9898))
+        s.send(bytes(nameTag + sep + name + end, 'UTF-8'))
+        s.close()
+    except:
+        x = "a"
+
+def exitDelay():
+    time.sleep(1)
+    os.system("taskkill /F /IM python3.9.exe")
 
 local_ip = getIP()
 a = threading.Thread(target=execCollector)
 a.start()
+
+
 
 b = threading.Thread(target=timeController)
 b.start()
@@ -125,16 +149,17 @@ app.secret_key = b'kdue#-_1adf'
 
 @app.route("/")
 def index():
-    # s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-    # s.connect(("8.8.8.8", 80))
-    # local_ip = s.getsockname()[0]
-    # global local_ip
-    # local_ip = request.remote_addr
+    global name
     local_ip = getIP()
     session['local_ip'] = local_ip
-    # s.close()
-    # del s
     if ('name' in session):
+        name = session['name']
+        hello = threading.Thread(target=sayIP9898)
+        hello.start()
+        return redirect(url_for('send'))
+    if (request.args.get("name", "") != ""):
+        name = request.args.get("name", "")
+        session['name'] = name
         return redirect(url_for('send'))
     f = codecs.open( os.path.dirname(os.path.abspath(__file__))+"/templates/login.html", "r", "utf-8")
     indexContent = f.read()
@@ -145,10 +170,6 @@ def index():
 @app.route("/send", methods=['GET', 'POST'])
 def send():
     global oldUpdate
-    if ('name' not in session):
-        global name
-        name = request.args.get("name", "")
-        session['name'] = name
     lastUpdate = request.form.get("lastUpdate", "")
     if(oldUpdate != lastUpdate):
         oldUpdate = lastUpdate
@@ -186,25 +207,32 @@ def empfang():
 
 
     empfangs_list = []
-    f = codecs.open(os.path.dirname(os.path.abspath(__file__))+"/text.txt", "r", "utf-8")
+    f = codecs.open(os.path.dirname(os.path.abspath(__file__))+"/data.txt", "r", "utf-8")
     content = f.read()
     f.close()
     content = content.replace("\r", "")
     contentArray = content.split("\n")
     reverseContent = []
     for i in reversed(contentArray):
-        reverseContent.append(i)
+        # print(i)
+        jsonObject = json.loads(i)
+        if ("Message" in jsonObject):
+            reverseContent.append(jsonObject["Sender"] + ": " + jsonObject["Message"])
+    # print(reverseContent)
     return render_template('empfang.html', empfangs=reverseContent)
 
 @app.route('/exit')
 def exit():
-    os.system("taskkill /F /IM python3.9.exe")
+    c = threading.Thread(target=exitDelay)
+    c.start()
+    pyautogui.hotkey('ctrl', 'w')
 
     return "exit"
 
-import webbrowser
 webbrowser.get().open_new(
         "http://localhost:9897/")
+
+
 if __name__ == "__main__":
     app.run(host="localhost", port=9897, debug=False)
 
