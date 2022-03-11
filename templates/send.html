@@ -4,37 +4,40 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel= "stylesheet" type= "text/css" href= "{{ url_for('static',filename='styles/send.css') }}">
+    <link rel="stylesheet" href="./send.css">
+
     <title>{{data[0]}}</title>
 </head>
 <body>
-    <h1>{{data[0]}}</h1>
-    <form action="/exit">
-        <input type="submit" value="Exit" />
-    </form>
-    IP: <b>{{data[1]}}</b>
-    <br>
-    Name: <b>{{data[2]}}</b>
-    <br>
-    <h2>Sender</h2>
-    <form id="sendForm" method="get" action="/send">
-        Empfänger: <input type="text" onchange="aktualisieren()" id="empfang" name="empfang" placeholder="{oldEmpfang}"><br>
-        Nachricht: <input type="text" onchange="aktualisieren()" id="nachricht" name="nachricht"><br>
-        <input type="hidden" name="lastUpdate" id="lastUpdate"></input>
-        <!-- type="submit" -->
-        <!-- <button type="submit" onclick="send()" >Submit</button> -->
-    </form>
-    <button onclick="submitEmpty()" >Submit</button>
-
-    <!-- <h2>Empfänger</h2>
-    <div id="empfangMessage">
-        {empfangMessage}
-    </div> -->
-
-
-    <div id="place_for_empfang"></div>
-
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
-
+    <center>
+        <h1>{{data[0]}}</h1>
+    </center>
+    <div class="content">
+        <div class="left">
+            <center>
+                <form action="/exit">
+                    <input class="button" type="submit" value="Exit" />
+                </form>
+                <br>
+                <h2>Infos</h2>
+                IP: <i>{{data[1]}}</i>
+                <br>
+                Name: <i>{{data[2]}}</i>
+                <br>
+                <h2>Sender</h2>
+                <form id="sendForm" method="get" action="/send">
+                    Empfänger: <input type="text" onchange="aktualisieren()" id="empfang" name="empfang" placeholder="{oldEmpfang}"><br>
+                    Nachricht: <input type="text" onchange="aktualisieren()" id="nachricht" name="nachricht" placeholder="Nachricht"><br>
+                    <input type="hidden" name="lastUpdate" id="lastUpdate"></input>
+                </form>
+                <button class="button"  onclick="submitEmpty()" >Submit</button>
+            </center>
+        </div>
+        <div id="place_for_empfang"></div>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+    </div>
+    <br><br><br>
 <script>
 let reloadEmpfang = function(){
     setTimeout(function(){
@@ -72,12 +75,6 @@ reloadEmpfang();
         document.getElementById("lastUpdate").value = Date.now()
     }
 
-//     window.onbeforeunload = confirmExit;
-//     function confirmExit(){
-//         alert("confirm exit is being called");
-//     return false;
-// }
-
     let submitEmpty = function(){
         let empfang = document.getElementById("empfang").value;
         let nachricht = document.getElementById("nachricht").value;
@@ -89,9 +86,6 @@ reloadEmpfang();
             form.submit();
             submit1();
         }
-        // $_POST['empfang'] = null
-        // document.getElementById("sendForm").submit();
-        // document.getElementById("sendForm").reset();
     }
 </script>
 </html>

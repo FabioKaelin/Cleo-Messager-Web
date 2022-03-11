@@ -111,8 +111,9 @@ def timeController():
     while True:
         now = datetime.now()
         a_timedelta = now - timestamp1
+        # print(str(now)+"|||"+ str(a_timedelta))
         seconds = a_timedelta.total_seconds()
-        # timestamp1 = datetime.now()
+        timestamp1 = datetime.now()
         if (seconds > 10):
             os.system("taskkill /F /IM python3.9.exe")
         time.sleep(3)
@@ -190,7 +191,7 @@ def send():
     # print(data)
     # if('empfang' in session):
 
-    f = codecs.open(os.path.dirname(os.path.abspath(__file__))+"/templates/send.html", "r", "utf-8")
+    f = codecs.open(os.path.dirname(os.path.abspath(__file__))+"\\templates\\send.html", "r", "utf-8")
     indexContent = f.read()
     indexContent = indexContent.replace("{title}", "Cleo-Messager")
     indexContent = indexContent.replace("{localIP}", session["local_ip"])

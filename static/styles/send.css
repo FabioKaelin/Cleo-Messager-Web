@@ -1,0 +1,117 @@
+body{
+    background-color: rgb(54, 73, 78);
+    color: rgb(40, 200, 211);
+    font-family: 'Mochiy Pop P One', sans-serif;
+    font-weight: bolder;
+    font-size:x-large;
+}
+
+#sendForm>input{
+    background-color: rgb(40, 200, 211);
+    color: rgb(40, 80, 211);
+    border-radius: 10px;
+    padding-left: 10px;
+    font-family: 'Mochiy Pop P One', sans-serif;
+    width: 30%;
+    height: 2em;
+    font-weight: bolder;
+    box-shadow: none;
+    border:0    px solid #cccccc
+
+}
+
+
+input::placeholder { /* Chrome, Firefox, Opera, Safari 10.1+ */
+    color: rgb(40, 80, 211);
+    /* font-size: large; */
+    opacity: 1; /* Firefox */
+    font-family: 'Mochiy Pop P One', sans-serif;
+    font-weight: bolder;
+}
+
+.content {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+}
+
+
+
+
+
+
+
+.left{
+    margin-left: 3%;
+    order: 1;
+    width: 43%;
+    /* align-items: center; */
+}
+
+
+#place_for_empfang{
+    order: 2;
+    width: 43%;
+}
+
+
+
+
+
+
+h1{
+    color: rgb(40, 200, 211);
+    /* background: #232323; */
+    text-shadow: 0 0 5px rgb(40, 200, 211), 0 0 20px #2850d3, 0 0 30px #2850d3, 0 0 40px #2850d3, 0 0 55px #2850d3, 0 0 75px #2850d3;
+    color: rgb(40, 200, 211);
+    /* background: #232323; */
+}
+
+.button {
+    background-color: rgb(40, 200, 211);
+    border: none;
+    color: rgb(40, 80, 211);
+    /* padding: 15px 32px; */
+    width: auto;
+    font-weight: bolder;
+    font-family: 'Mochiy Pop P One', sans-serif;
+    /* height: 5%; */
+    font-size: large;
+    /* min-height: 200%; */
+    border-radius: 10px;
+
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+}
+
+.place_for_empfang{
+    order: 1;
+}
+
+
+
+
+
+
+
+
+
+::-webkit-scrollbar {
+    width: 20px;
+}
+
+::-webkit-scrollbar-track {
+    box-shadow: inset 0 0 5px grey;
+    border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb {
+    background: rgb(31, 153, 161);
+    border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: rgb(21, 103, 109);
+
+}
