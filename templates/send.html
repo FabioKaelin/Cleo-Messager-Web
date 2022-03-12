@@ -5,7 +5,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel= "stylesheet" type= "text/css" href= "{{ url_for('static',filename='styles/send.css') }}">
-    <link rel="stylesheet" href="./send.css">
+    <link rel="stylesheet" href="../static/styles/send.css">
 
     <title>{{data[0]}}</title>
 </head>
@@ -27,11 +27,11 @@
                 <br>
                 <h2>Sender</h2>
                 <form id="sendForm" method="get" action="/send">
-                    Empfänger: <input type="text" onchange="aktualisieren()" id="empfang" name="empfang" placeholder="{oldEmpfang}"><br>
+                    Empfänger: <input type="text" onchange="aktualisieren()" id="empfang" name="empfang" placeholder="Empfänger"><br>
                     Nachricht: <input type="text" onchange="aktualisieren()" id="nachricht" name="nachricht" placeholder="Nachricht"><br>
                     <input type="hidden" name="lastUpdate" id="lastUpdate"></input>
+                    <button class="button"  onclick="submitEmpty()" >Submit</button>
                 </form>
-                <button class="button"  onclick="submitEmpty()" >Submit</button>
             </center>
         </div>
         <div id="place_for_empfang"></div>

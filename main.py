@@ -1,13 +1,13 @@
 from datetime import datetime
 from datetime import *
 import random
-from flask import Flask, jsonify, redirect, render_template, session, url_for
+from flask import Flask, redirect, render_template, session, url_for
 from flask import request
 from flask import *
 import json
 import codecs
+import platform
 import os
-# from turbo_flask import Turbo
 import os
 import socket
 import sys
@@ -15,7 +15,6 @@ import threading
 import time
 import codecs
 import threading
-from multiprocessing import Process
 import webbrowser
 import pyautogui
 
@@ -107,7 +106,7 @@ def execCollector():
 
 def timeController():
     global timestamp1
-    time.sleep(10)
+    time.sleep(30)
     while True:
         now = datetime.now()
         a_timedelta = now - timestamp1
@@ -115,8 +114,8 @@ def timeController():
         seconds = a_timedelta.total_seconds()
         timestamp1 = datetime.now()
         if (seconds > 10):
-            os.system("taskkill /F /IM python3.9.exe")
-        time.sleep(3)
+            os.system("taskkill /F /IM python" + platform.python_version().split(".")[0] + "." + platform.python_version().split(".")[1] + ".exe")
+        time.sleep(5)
 
 def sayIP9898():
     try:
@@ -131,7 +130,8 @@ def sayIP9898():
 
 def exitDelay():
     time.sleep(1)
-    os.system("taskkill /F /IM python3.9.exe")
+    os.system("taskkill /F /IM python" + platform.python_version().split(".")[0] + "." + platform.python_version().split(".")[1] + ".exe")
+
 
 local_ip = getIP()
 a = threading.Thread(target=execCollector)
@@ -153,19 +153,22 @@ def index():
     global name
     local_ip = getIP()
     session['local_ip'] = local_ip
-    if ('name' in session):
-        name = session['name']
-        hello = threading.Thread(target=sayIP9898)
-        hello.start()
-        return redirect(url_for('send'))
+    # if ('name' in session):
+    #     name = session['name']
+    #     hello = threading.Thread(target=sayIP9898)
+    #     hello.start()
+    #     return redirect(url_for('send'))
     if (request.args.get("name", "") != ""):
         name = request.args.get("name", "")
         session['name'] = name
         return redirect(url_for('send'))
     f = codecs.open( os.path.dirname(os.path.abspath(__file__))+"/templates/login.html", "r", "utf-8")
     indexContent = f.read()
-    indexContent = indexContent.replace("{title}", "Cleo-Messager")
+    indexContent = indexContent.replace("{title}", "Cleo-Messenger")
     indexContent = indexContent.replace("{localIP}", local_ip)
+
+    data = ["Cleo-Messenger", session["local_ip"]]
+    return render_template("login.html", data=data)
     return indexContent
 
 @app.route("/send", methods=['GET', 'POST'])
@@ -193,11 +196,11 @@ def send():
 
     f = codecs.open(os.path.dirname(os.path.abspath(__file__))+"\\templates\\send.html", "r", "utf-8")
     indexContent = f.read()
-    indexContent = indexContent.replace("{title}", "Cleo-Messager")
+    indexContent = indexContent.replace("{title}", "Cleo-Messenger")
     indexContent = indexContent.replace("{localIP}", session["local_ip"])
     indexContent = indexContent.replace("{name}", session['name'])
 
-    data = ["Cleo-Messager", session["local_ip"],session["name"]]
+    data = ["Cleo-Messenger", session["local_ip"],session["name"]]
     # return indexContent
     return render_template("send.html", data=data)
 
@@ -242,4 +245,4 @@ if __name__ == "__main__":
 input("Terminate")
 
 
-os.system("taskkill /F /IM python3.9.exe")
+os.system("taskkill /F /IM python" + platform.python_version().split(".")[0] + "." + platform.python_version().split(".")[1] + ".exe")

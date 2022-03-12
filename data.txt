@@ -22,3 +22,7 @@
 {"Sender": "Fabio", "Message": "192.168.1.131"}
 {"Sender": "Fabio", "Message": "192.168.1.131"}
 {"Sender": "Fabio", "Message": "192.168.1.131"}
+{"Sender": "Fabio", "Message": "asdf"}
+{"Sender": "Fabio", "Message": "Ich bin Fabio"}
+{"Sender": "Fabio", "Message": "Halaadf"}
+{"Sender": "Fabio", "Message": "öalkdsfj"}

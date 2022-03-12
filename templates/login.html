@@ -4,15 +4,21 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{title}</title>
+    <link rel= "stylesheet" type= "text/css" href= "{{ url_for('static',filename='styles/login.css') }}">
+    <link rel="stylesheet" href="../static/styles/login.css">
+
+    <title>{{data[0]}}</title>
 </head>
 <body>
-    <h1>{title}</h1>
-    <p>IP: <b>{localIP}</b></p>
-    <br>
-    <form action="/" method="get">
-        Name: <input type="text" name="name"><br>
-    </form>
+    <center>
+        <h1>{{data[0]}}</h1>
+        <p>IP: <b>{{data[1]}}</b></p>
+        <br>
+        <form id="nameInput" action="/" method="get">
+            Name: <input id="nameInputText" type="text" name="name" placeholder="Name"><br>
+            <input class="button" type="submit" value="Submit">
+        </form>
+    </center>
 
 </body>
 </html>
