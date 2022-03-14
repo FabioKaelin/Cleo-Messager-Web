@@ -16,7 +16,7 @@ import time
 import codecs
 import threading
 import webbrowser
-# import pyautogui
+import pyautogui
 
 sep = "#SEP#"
 end = "#END#"
