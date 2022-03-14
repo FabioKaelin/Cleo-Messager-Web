@@ -36,6 +36,16 @@ messages = [("Fabio", "hallo du"),("Chris", "ich mag python")]
 timestamp1 = datetime.now()
 ort = "?"
 ipListExists = exists(os.path.dirname(os.path.abspath(__file__))+"/IP.txt")
+if (ipListExists == False):
+    f = open(os.path.dirname(os.path.abspath(__file__))+"/IP.txt", "w")
+    f.write("")
+    f.close()
+DataListExists = exists(os.path.dirname(os.path.abspath(__file__))+"/data.txt")
+if (DataListExists == False):
+    f = open(os.path.dirname(os.path.abspath(__file__))+"/data.txt", "w")
+    f.write("")
+    f.close()
+
 
 def logoutIP9898():
     for x in range(2, 255):
@@ -228,23 +238,10 @@ def send():
             sendMessage(nachricht, empfang, session['name'])
 
 
-
-    # session['data'] = request.json
-    # data = session.get('data')
-    # print(data)
-    # if('empfang' in session):
-
-    f = codecs.open(os.path.dirname(os.path.abspath(__file__))+"\\templates\\send.html", "r", "utf-8")
-    indexContent = f.read()
-    indexContent = indexContent.replace("{title}", "Cleo-Messenger")
-    indexContent = indexContent.replace("{localIP}", session["local_ip"])
-    indexContent = indexContent.replace("{name}", session['name'])
+    data = ["Cleo-Messenger", session["local_ip"],session["name"]]
 
     if ("ort" in session):
-        data = ["Cleo-Messenger", session["local_ip"],session["name"],session["ort"]]
-    else:
-        data = ["Cleo-Messenger", session["local_ip"],session["name"]]
-    # return indexContent
+        data.append(session["ort"])
     return render_template("send.html", data=data)
 
 @app.route('/empfang')

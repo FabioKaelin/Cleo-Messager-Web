@@ -1,3 +1,0 @@
-{"Sender": "Fabio", "Message": "Test"}
-{"Sender": "Fabio", "Message": "Hallo"}
-{"Sender": "Fabio", "Message": "Hallo 2"}
