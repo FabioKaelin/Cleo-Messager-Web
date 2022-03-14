@@ -19,16 +19,25 @@
                 <form action="/exit">
                     <input class="button" type="submit" value="Exit" />
                 </form>
+                <form action="/staticIP">
+                    <input class="button" type="submit" value="Add static IP" />
+                </form>
                 <br>
                 <h2>Infos</h2>
                 IP: <i>{{data[1]}}</i>
                 <br>
                 Name: <i>{{data[2]}}</i>
                 <br>
+                {% if data[3] is defined %}
+                    Ort: <i>{{data[3]}}</i>
+                    <br>
+                {% endif %}
+                <!-- <i> {{data[2]}} </i> -->
+                <br>
                 <h2>Sender</h2>
                 <form id="sendForm" method="get" action="/send">
                     Empfänger: <input type="text" onchange="aktualisieren()" id="empfang" name="empfang" placeholder="Empfänger"><br>
-                    Nachricht: <input type="text" onchange="aktualisieren()" id="nachricht" name="nachricht" placeholder="Nachricht" autocomplete="false"><br>
+                    Nachricht: <input type="text" onchange="aktualisieren()" id="nachricht" name="nachricht" placeholder="Nachricht" autocomplete="off"><br>
                     <input type="hidden" name="lastUpdate" id="lastUpdate"></input>
                     <button class="button"  onclick="submitEmpty()" >Submit</button>
                 </form>

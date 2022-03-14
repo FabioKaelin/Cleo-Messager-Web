@@ -17,6 +17,7 @@ import codecs
 import threading
 import webbrowser
 import pyautogui
+from os.path import exists
 
 sep = "#SEP#"
 end = "#END#"
@@ -33,7 +34,8 @@ oldUpdate = "1"
 name = oldName
 messages = [("Fabio", "hallo du"),("Chris", "ich mag python")]
 timestamp1 = datetime.now()
-
+ort = "?"
+ipListExists = exists(os.path.dirname(os.path.abspath(__file__))+"/IP.txt")
 
 def logoutIP9898():
     for x in range(2, 255):
@@ -82,7 +84,8 @@ def sendMessage(message, empfang, name):
         # print(empfang)
         # print(port)
         # print(s)
-        s.connect((empfang, port))
+        ip = empfangToIp(empfang)
+        s.connect((ip, port))
         s.send(bytes(messageTag, 'UTF-8'))
         s.send(bytes(name, 'UTF-8'))
 
@@ -106,13 +109,12 @@ def execCollector():
 
 def timeController():
     global timestamp1
-    time.sleep(30)
+    time.sleep(5)
     while True:
         now = datetime.now()
         a_timedelta = now - timestamp1
         # print(str(now)+"|||"+ str(a_timedelta))
         seconds = a_timedelta.total_seconds()
-        timestamp1 = datetime.now()
         if (seconds > 10):
             os.system("taskkill /F /IM python" + platform.python_version().split(".")[0] + "." + platform.python_version().split(".")[1] + ".exe")
         time.sleep(5)
@@ -132,34 +134,54 @@ def exitDelay():
     time.sleep(1)
     os.system("taskkill /F /IM python" + platform.python_version().split(".")[0] + "." + platform.python_version().split(".")[1] + ".exe")
 
+def empfangToIp(empfang):
+    if (ipListExists):
+        global ort
+        # ort = "zli"
+        f = codecs.open(os.path.dirname(os.path.abspath(__file__))+"/IP.txt", "r", "utf-8")
+        content = f.read()
+        f.close()
+        content = content.replace("\r", "")
+        contentArray = content.split("\n")
+        for i in contentArray:
+            # print(i)
+            jsonObject = json.loads(i)
+            if (jsonObject["Ort"] == ort):
+                if(jsonObject["Name"]==empfang):
+                    return jsonObject["Ip"]
+    return empfang
+
+
+
 
 local_ip = getIP()
 a = threading.Thread(target=execCollector)
 a.start()
-
-
-
 b = threading.Thread(target=timeController)
 b.start()
 
 app = Flask(__name__)
-# try:
-
 app.config['ENVIRONMENT'] = "development"
 app.secret_key = b'kdue#-_1adf'
 
-@app.route("/")
+
+
+
+@app.route("/",methods=['GET', 'POST'])
 def index():
     global name
+    global ort
     local_ip = getIP()
+    if (session['local_ip'] == local_ip):
+        if ("name" in session):
+            ort = session['ort']
+            name = session['name']
+            return redirect(url_for('send'))
     session['local_ip'] = local_ip
-    # if ('name' in session):
-    #     name = session['name']
-    #     hello = threading.Thread(target=sayIP9898)
-    #     hello.start()
-    #     return redirect(url_for('send'))
-    if (request.args.get("name", "") != ""):
-        name = request.args.get("name", "")
+    if (request.form.get("name", "") != ""):
+        ort = request.form.get("ort", "")
+        session['ort'] = ort
+        name = request.form.get("name", "")
         session['name'] = name
         return redirect(url_for('send'))
     f = codecs.open( os.path.dirname(os.path.abspath(__file__))+"/templates/login.html", "r", "utf-8")
@@ -170,6 +192,24 @@ def index():
     data = ["Cleo-Messenger", session["local_ip"]]
     return render_template("login.html", data=data)
     return indexContent
+
+@app.route("/staticIP",methods=['GET', 'POST'])
+def staticIP():
+    if (request.form.get("ort", "") != "" and request.form.get("name", "") != "" and request.form.get("ip", "") != ""):
+        ort = request.form.get("ort", "")
+        name = request.form.get("name", "")
+        ip = request.form.get("ip", "")
+        f = codecs.open(os.path.dirname(os.path.abspath(__file__)) +"/IP.txt", "r", "utf-8")
+        content = f.read()
+        f.close()
+        f = codecs.open(os.path.dirname(os.path.abspath(__file__))+"/IP.txt", "w", "utf-8")
+        #{"Ort": "zli", "Name": "Fabio", "Ip": "10.80.4.124"}
+        f.write(content+'\n{"Ort": "' + ort + '", "Name": "' + name + ', "Ip": "' + ip + ', "}')
+        f.close()
+        return redirect(url_for('send'))
+    else:
+        data = ["Cleo-Messenger", session["local_ip"]]
+        return render_template("staticIP.html", data=data)
 
 @app.route("/send", methods=['GET', 'POST'])
 def send():
@@ -200,7 +240,10 @@ def send():
     indexContent = indexContent.replace("{localIP}", session["local_ip"])
     indexContent = indexContent.replace("{name}", session['name'])
 
-    data = ["Cleo-Messenger", session["local_ip"],session["name"]]
+    if ("ort" in session):
+        data = ["Cleo-Messenger", session["local_ip"],session["name"],session["ort"]]
+    else:
+        data = ["Cleo-Messenger", session["local_ip"],session["name"]]
     # return indexContent
     return render_template("send.html", data=data)
 
@@ -224,6 +267,12 @@ def empfang():
             reverseContent.append(jsonObject["Sender"] + ": " + jsonObject["Message"])
     # print(reverseContent)
     return render_template('empfang.html', empfangs=reverseContent)
+
+@app.route('/empty')
+def empty():
+    global timestamp1
+    timestamp1 = datetime.now()
+    return render_template('empty.html')
 
 @app.route('/exit')
 def exit():
