@@ -13,16 +13,21 @@
     <center>
         <h1>{{data[0]}}</h1>
     </center>
+    <center><div class="buttons">
+        <form action="/logout">
+            <input class="button" type="submit" value="logout" />
+        </form>
+        &emsp;
+        <form action="/exit">
+            <input class="button" type="submit" value="Exit" />
+        </form>
+        &emsp;
+        <form action="/staticIP">
+            <input class="button" type="submit" value="Add static IP" />
+        </form>
+    </div></center>
     <div class="content">
         <div class="left">
-            <center>
-                <form action="/exit">
-                    <input class="button" type="submit" value="Exit" />
-                </form>
-                <form action="/staticIP">
-                    <input class="button" type="submit" value="Add static IP" />
-                </form>
-                <br>
                 <h2>Infos</h2>
                 IP: <i>{{data[1]}}</i>
                 <br>
@@ -32,8 +37,6 @@
                     Ort: <i>{{data[3]}}</i>
                     <br>
                 {% endif %}
-                <!-- <i> {{data[2]}} </i> -->
-                <br>
                 <h2>Sender</h2>
                 <form id="sendForm" method="get" action="/send">
                     Empfänger: <input type="text" onchange="aktualisieren()" id="empfang" name="empfang" placeholder="Empfänger"><br>
@@ -41,9 +44,12 @@
                     <input type="hidden" name="lastUpdate" id="lastUpdate"></input>
                     <button class="button"  onclick="submitEmpty()" >Submit</button>
                 </form>
-            </center>
         </div>
-        <div id="place_for_empfang"></div>
+        <div class="middle"></div>
+        <div class="right">
+            <h2>Empfang</h2>
+            <div id="place_for_empfang"></div>
+        </div>
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
     </div>
     <br><br><br>

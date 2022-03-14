@@ -34,7 +34,7 @@ oldUpdate = "1"
 name = oldName
 messages = [("Fabio", "hallo du"),("Chris", "ich mag python")]
 timestamp1 = datetime.now()
-ort = "?"
+ort = None
 ipListExists = exists(os.path.dirname(os.path.abspath(__file__))+"/IP.txt")
 if (ipListExists == False):
     f = open(os.path.dirname(os.path.abspath(__file__))+"/IP.txt", "w")
@@ -115,7 +115,8 @@ def sendMessage(message, empfang, name):
         return message
 
 def execCollector():
-    os.system("python " + os.path.dirname(os.path.abspath(__file__)) + "/collector.py "+ os.path.dirname(os.path.abspath(__file__)))
+    print("vor exeCollecoterexec")
+    os.system("python " + os.path.dirname(os.path.abspath(__file__)) + "/collector.py " + os.path.dirname(os.path.abspath(__file__)))
 
 def timeController():
     global timestamp1
@@ -206,6 +207,13 @@ def index():
     data = ["Cleo-Messenger", session["local_ip"]]
     return render_template("login.html", data=data)
     return indexContent
+
+@app.route("/logout")
+def logout():
+    del session["name"]
+    del session["ort"]
+    del session["local_ip"]
+    return redirect(url_for(''))
 
 @app.route("/staticIP",methods=['GET', 'POST'])
 def staticIP():
