@@ -182,11 +182,12 @@ def index():
     global name
     global ort
     local_ip = getIP()
-    if (session['local_ip'] == local_ip):
-        if ("name" in session):
-            ort = session['ort']
-            name = session['name']
-            return redirect(url_for('send'))
+    if ('local_ip' in session):
+        if (session['local_ip'] == local_ip):
+            if ("name" in session):
+                ort = session['ort']
+                name = session['name']
+                return redirect(url_for('send'))
     session['local_ip'] = local_ip
     if (request.form.get("name", "") != ""):
         ort = request.form.get("ort", "")
