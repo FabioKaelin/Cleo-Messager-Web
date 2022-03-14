@@ -214,7 +214,7 @@ def staticIP():
         f.close()
         f = codecs.open(os.path.dirname(os.path.abspath(__file__))+"/IP.txt", "w", "utf-8")
         #{"Ort": "zli", "Name": "Fabio", "Ip": "10.80.4.124"}
-        f.write(content+'\n{"Ort": "' + ort + '", "Name": "' + name + ', "Ip": "' + ip + ', "}')
+        f.write(content+'\n{"Ort": "' + ort + '", "Name": "' + name + '", "Ip": "' + ip + '"}')
         f.close()
         return redirect(url_for('send'))
     else:
