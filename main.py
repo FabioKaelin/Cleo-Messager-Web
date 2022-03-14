@@ -156,8 +156,8 @@ def empfangToIp(empfang):
         for i in contentArray:
             # print(i)
             jsonObject = json.loads(i)
-            if (jsonObject["Ort"] == ort):
-                if(jsonObject["Name"]==empfang):
+            if (jsonObject["Ort"] == ort.lower()):
+                if(jsonObject["Name"]== empfang.lower()):
                     return jsonObject["Ip"]
     return empfang
 
@@ -209,12 +209,8 @@ def staticIP():
         ort = request.form.get("ort", "")
         name = request.form.get("name", "")
         ip = request.form.get("ip", "")
-        f = codecs.open(os.path.dirname(os.path.abspath(__file__)) +"/IP.txt", "r", "utf-8")
-        content = f.read()
-        f.close()
-        f = codecs.open(os.path.dirname(os.path.abspath(__file__))+"/IP.txt", "w", "utf-8")
-        #{"Ort": "zli", "Name": "Fabio", "Ip": "10.80.4.124"}
-        f.write(content+'\n{"Ort": "' + ort + '", "Name": "' + name + '", "Ip": "' + ip + '"}')
+        f = codecs.open(os.path.dirname(os.path.abspath(__file__))+"/IP.txt", "a", "utf-8")
+        f.write('\n{"Ort": "' + ort.lower() + '", "Name": "' + name.lower() + '", "Ip": "' + ip + '"}')
         f.close()
         return redirect(url_for('send'))
     else:

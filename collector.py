@@ -115,11 +115,8 @@ def server():
             client_socket.close()
             sserver.close()
             print(messagesplit[0] + ": " + messagesplit[1])
-            f = codecs.open(sys.argv[1] +"/data.txt", "r", "utf-8")
-            content = f.read()
-            f.close()
-            f = codecs.open(sys.argv[1]+"/data.txt", "w", "utf-8")
-            f.write(content+'\n{"Sender": "' + messagesplit[0] + '", "Message": "' + messagesplit[1] + '"}')
+            f = codecs.open(sys.argv[1]+"/data.txt", "a", "utf-8")
+            f.write('\n{"Sender": "' + messagesplit[0] + '", "Message": "' + messagesplit[1] + '"}')
             f.close()
         elif (nameTag in message):
             message = message.replace(sep, "")
