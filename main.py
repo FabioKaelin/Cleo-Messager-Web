@@ -152,13 +152,16 @@ def empfangToIp(empfang):
         content = f.read()
         f.close()
         content = content.replace("\r", "")
+        if (len(content) < 5):
+            return empfang
         contentArray = content.split("\n")
         for i in contentArray:
             # print(i)
-            jsonObject = json.loads(i)
-            if (jsonObject["Ort"] == ort.lower()):
-                if(jsonObject["Name"]== empfang.lower()):
-                    return jsonObject["Ip"]
+            if (len(i)> 5):
+                jsonObject = json.loads(i)
+                if (jsonObject["Ort"] == ort.lower()):
+                    if(jsonObject["Name"]== empfang.lower()):
+                        return jsonObject["Ip"]
     return empfang
 
 
@@ -252,13 +255,17 @@ def empfang():
     content = f.read()
     f.close()
     content = content.replace("\r", "")
+    # print(len(content))
+    if (len(content) < 5):
+        return render_template('empty.html')
     contentArray = content.split("\n")
     reverseContent = []
     for i in reversed(contentArray):
         # print(i)
-        jsonObject = json.loads(i)
-        if ("Message" in jsonObject):
-            reverseContent.append(jsonObject["Sender"] + ": " + jsonObject["Message"])
+        if (len(i) > 5):
+            jsonObject = json.loads(i)
+            if ("Message" in jsonObject):
+                reverseContent.append(jsonObject["Sender"] + ": " + jsonObject["Message"])
     # print(reverseContent)
     return render_template('empfang.html', empfangs=reverseContent)
 
