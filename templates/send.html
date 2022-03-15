@@ -14,6 +14,10 @@
         <h1>{{data[0]}}</h1>
     </center>
     <center><div class="buttons">
+        <form action="#">
+            <input class="button" onclick="clearEmpfang()" type="button" value="Clear Empfang" />
+        </form>
+        &emsp;
         <form action="/logout">
             <input class="button" type="submit" value="logout" />
         </form>
@@ -26,6 +30,7 @@
             <input class="button" type="submit" value="Add static IP" />
         </form>
     </div></center>
+    <input type="hidden" name="clear" value="false" id="clearValue">
     <div class="content">
         <div class="left">
                 <h2>Infos</h2>
@@ -54,6 +59,22 @@
     </div>
     <br><br><br>
 <script>
+
+let clearEmpfang = function(){
+    $.ajax({
+            url: "/empfang",
+            type: "get",
+            data: {
+                clear: "true",
+            },
+            success: function(response) {
+                $("#place_for_empfang").html(response);
+            },
+            error: function(xhr) {
+            //Do Something to handle error
+            }
+        });
+}
 let reloadEmpfang = function(){
     setTimeout(function(){
         $.ajax({

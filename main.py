@@ -1,3 +1,4 @@
+
 import codecs
 import json
 import os
@@ -16,6 +17,7 @@ import pyautogui
 from flask import *
 from flask import Flask, redirect, render_template, request, session, url_for
 
+sys.dont_write_bytecode = True
 sep = "#SEP#"
 end = "#END#"
 nameAnswerTag = "#NAMEANSWER#"
@@ -292,6 +294,11 @@ def exit9898():
     except:
         x = "a"
 
+def clearEmpfang():
+    f = codecs.open(os.path.dirname(os.path.abspath(__file__))+"/data/data.txt", "w", "utf-8")
+    f.write('')
+    f.close()
+
 def exitDelay():
     logoutT = threading.Thread(target=logoutIP9898)
     logoutT.start()
@@ -333,7 +340,6 @@ def empfangToIp(empfang):
                     if(jsonObject["Name"]== empfang.lower()):
                         return jsonObject["Ip"]
     return empfang
-
 
 
 
@@ -457,10 +463,10 @@ def send():
 
 @app.route('/empfang')
 def empfang():
+    if(request.args.get('clear') == "true"):
+        clearEmpfang();
     global timestamp1
     timestamp1 = datetime.now()
-
-
     empfangs_list = []
     f = codecs.open(os.path.dirname(os.path.abspath(__file__))+"/data/data.txt", "r", "utf-8")
     content = f.read()
