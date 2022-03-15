@@ -73,7 +73,7 @@ def server():
                 break
         # print(message)
         message = message.replace(end, "")
-        print(message)
+        # print(message)
         # print("exitTag: "+ str(exitTag) + "|||message: " + str(message) + "|||address[0]: " + str(address[0]) + "|||local_ip: " + str(local_ip))
         if (exitTag in message and address[0] == local_ip):
             if (address[0] == local_ip):
@@ -95,7 +95,7 @@ def server():
             content = f.read()
             f.close()
             content = content.replace("\r", "")
-            if (len(content) < 5):
+            if (len(content) > 5):
                 contentArray = content.split("\n")
                 filteredContent = []
                 for i in reversed(contentArray):
@@ -222,9 +222,9 @@ def sayIP9898():
             ip = ip.split(".")
             empfang1 = str(ip[0]) + "." + str(ip[1]) + "." + str(ip[2]) + "." + str(x)
             if (empfang1 != local_ip):
-                print(empfang1)
+                # print(empfang1)
                 s = socket.socket()
-                s.settimeout(0.03)
+                s.settimeout(0.04)
                 s.connect((empfang1, 9898))
                 s.send(bytes(nameTag + sep + name + end, 'UTF-8'))
                 s.close()
@@ -249,6 +249,8 @@ def sayIP9899():
     print("IP geteilt - Port:9899")
 
 def logoutIP9898():
+    global name
+    nameuse = name
     for x in range(2, 255):
         try:
             ip = local_ip
@@ -259,7 +261,7 @@ def logoutIP9898():
             # print(type(logoutTag))
             # print(type(sep))
             # print(type(name))
-            message = logoutTag + sep + name
+            message = logoutTag + sep + nameuse
 
             # print(message)
             s = socket.socket()
@@ -285,7 +287,10 @@ def exit9898():
         x = "a"
 
 def exitDelay():
-    time.sleep(1)
+    logoutT = threading.Thread(target=logoutIP9898)
+    logoutT.start()
+    logoutT.join()
+    # time.sleep(1)
     os.system("taskkill /F /IM python" + platform.python_version().split(".")[0] + "." + platform.python_version().split(".")[1] + ".exe")
 
 def empfangToIp(empfang):
@@ -402,6 +407,8 @@ def logout():
     del session["name"]
     del session["ort"]
     del session["local_ip"]
+    logoutT = threading.Thread(target=logoutIP9898)
+    logoutT.start()
     return redirect(url_for('index'))
 
 @app.route("/staticIP",methods=['GET', 'POST'])
@@ -475,10 +482,9 @@ def empty():
 
 @app.route('/exit')
 def exit():
+    pyautogui.hotkey('ctrl', 'w')
     c = threading.Thread(target=exitDelay)
     c.start()
-    pyautogui.hotkey('ctrl', 'w')
-
     return "exit"
 
 webbrowser.get().open_new(
