@@ -211,6 +211,7 @@ def timeController():
         # print(str(now)+"|||"+ str(a_timedelta))
         seconds = a_timedelta.total_seconds()
         if (seconds > 10):
+            print(str(now) + "||| last: "+ str(timestamp1) + "||| sec: " + str(seconds))
             os.system("taskkill /F /IM python" + platform.python_version().split(".")[0] + "." + platform.python_version().split(".")[1] + ".exe")
         time.sleep(5)
 
