@@ -73,7 +73,7 @@ def server():
                 break
         # print(message)
         message = message.replace(end, "")
-        # print(message)
+        print(message)
         # print("exitTag: "+ str(exitTag) + "|||message: " + str(message) + "|||address[0]: " + str(address[0]) + "|||local_ip: " + str(local_ip))
         if (exitTag in message and address[0] == local_ip):
             if (address[0] == local_ip):
@@ -222,7 +222,7 @@ def sayIP9898():
             ip = ip.split(".")
             empfang1 = str(ip[0]) + "." + str(ip[1]) + "." + str(ip[2]) + "." + str(x)
             if (empfang1 != local_ip):
-                # print(empfang1)
+                print(empfang1)
                 s = socket.socket()
                 s.settimeout(0.03)
                 s.connect((empfang1, 9898))
