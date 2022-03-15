@@ -19,13 +19,13 @@
             </form>
             &emsp;
             <form action="/send">
-                <input class="button" type="submit" value="Send" />
+                <input class="button" type="submit" value="Zurück" />
             </form>
         </div></center>
         <p>IP: <b>{{data[1]}}</b></p>
         <br>
         {% if data[2] > 0 %}
-            <h2>Static</h2>
+            <h2>Statische IPs</h2>
             {% for text in textsStatic %}
                 {{ text }}<br>
             {% endfor %}
@@ -33,7 +33,7 @@
 
 
         {% if data[3] > 0 %}
-            <h2>Session</h2>
+            <h2>Session-IPs</h2>
             {% for text in textsSession %}
                 {{ text }}<br>
             {% endfor %}

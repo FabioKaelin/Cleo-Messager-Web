@@ -15,23 +15,23 @@
     </center>
     <center><div class="buttons">
         <form action="#">
-            <input class="button" onclick="clearEmpfang()" type="button" value="Clear Empfang" />
+            <input class="button" onclick="clearEmpfang()" type="button" value="Empfang leeren" />
         </form>
         &emsp;
         <form action="/logout">
-            <input class="button" type="submit" value="logout" />
+            <input class="button" type="submit" value="Ausloggen" />
         </form>
         &emsp;
         <form action="/addressBook">
-            <input class="button" type="submit" value="Address-Buch" />
+            <input class="button" type="submit" value="Adress-Buch" />
         </form>
         &emsp;
         <form action="/exit">
-            <input class="button" type="submit" value="Exit" />
+            <input class="button" type="submit" value="Beenden" />
         </form>
         &emsp;
         <form action="/staticIP">
-            <input class="button" type="submit" value="Add static IP" />
+            <input class="button" type="submit" value="statische IP hinzufügen" />
         </form>
     </div></center>
     <input type="hidden" name="clear" value="false" id="clearValue">
@@ -51,7 +51,7 @@
                     Empfänger: <input type="text" onchange="aktualisieren()" id="empfang" name="empfang" placeholder="Empfänger"><br>
                     Nachricht: <input type="text" onchange="aktualisieren()" id="nachricht" name="nachricht" placeholder="Nachricht" autocomplete="off"><br>
                     <input type="hidden" name="lastUpdate" id="lastUpdate"></input>
-                    <button class="button"  onclick="submitEmpty()" >Submit</button>
+                    <button class="button"  onclick="submitEmpty()" >Bestätigen</button>
                 </form>
         </div>
         <div class="middle"></div>
