@@ -1,27 +1,30 @@
 # Cleo-Messager-Web
 
-## Description
+## Beschreibung
 
-This is a Messenger and communicate in the current Subnet.
-I have developed it as a Hobby.
+Dies ist ein Messenger welcher über das lokale Netzwerk kommuniziert.
+Ich habe diesen in meiner Freizeit gemacht.
 
-## Install
+## Installation
 
-### Required Python-Packages
+### benötigte Python-Packages
 
     pip install flask
     pip install pyautogui
     pip install datetime
 
-## Before Start
+oder
 
-This Application is a Messenger and communicate in the network.
-You have to ***disable the Firewall*** or ***give the Port 9898 free***.
+**setup.bat** doppenklicken
+
+## vor dem Start
+
+Um Nachrichten empfangen zu konnen musst du ***die Firewall ausschalten*** oder ***das Port 9898 als Ausnahme in deine Firewall einbauen***.
 
 ## Start
 
     python main.py
 
-OR
+oder
 
-doubleclick **main.py**
+**main.py** doppenklicken
