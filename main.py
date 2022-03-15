@@ -1,4 +1,3 @@
-
 import codecs
 import json
 import os
@@ -12,12 +11,13 @@ from datetime import *
 from datetime import datetime
 from os.path import exists
 import time
+from pkg_resources import Environment
 
 import pyautogui
 from flask import *
 from flask import Flask, redirect, render_template, request, session, url_for
 
-sys.dont_write_bytecode = True
+# sys.dont_write_bytecode = True
 sep = "#SEP#"
 end = "#END#"
 nameAnswerTag = "#NAMEANSWER#"
@@ -350,8 +350,8 @@ b = threading.Thread(target=timeController)
 b.start()
 
 app = Flask(__name__)
-app.config['ENVIRONMENT'] = "development"
-app.secret_key = b'kdue#-_1adf'
+app.secret_key = b'kdue#-_1iefm_.,.3|a654adf'
+
 
 
 
@@ -504,6 +504,7 @@ webbrowser.get().open_new(
 
 
 if __name__ == "__main__":
+    app.env = "development"
     app.run(host="localhost", port=9897, debug=False)
 
 # except KeyboardInterrupt:

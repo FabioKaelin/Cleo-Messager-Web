@@ -4,10 +4,14 @@
 
 ### Required Python-Packages
 
-pip install flask
-pip install pyautogui
-pip install datetime
+    pip install flask
+    pip install pyautogui
+    pip install datetime
 
 ## Start
 
-python main.py
+    python main.py
+
+OR
+
+doubleclick **main.py**
