@@ -35,20 +35,20 @@ messages = [("Fabio", "hallo du"),("Chris", "ich mag python")]
 timestamp1 = datetime.now()
 ort = None
 
-StaticipListExists = exists(os.path.dirname(os.path.abspath(__file__))+"/StaticIP.txt")
+StaticipListExists = exists(os.path.dirname(os.path.abspath(__file__))+"/data/StaticIP.txt")
 if (StaticipListExists == False):
-    f = open(os.path.dirname(os.path.abspath(__file__))+"/StaticIP.txt", "w")
+    f = open(os.path.dirname(os.path.abspath(__file__))+"/data/StaticIP.txt", "w")
     f.write("")
     f.close()
 
-DataListExists = exists(os.path.dirname(os.path.abspath(__file__))+"/data.txt")
+DataListExists = exists(os.path.dirname(os.path.abspath(__file__))+"/data/data.txt")
 if (DataListExists == False):
-    f = open(os.path.dirname(os.path.abspath(__file__))+"/data.txt", "w")
+    f = open(os.path.dirname(os.path.abspath(__file__))+"/data/data.txt", "w")
     f.write("")
     f.close()
 
 
-f = open(os.path.dirname(os.path.abspath(__file__))+"/SessionIP.txt", "w")
+f = open(os.path.dirname(os.path.abspath(__file__))+"/data/SessionIP.txt", "w")
 f.write("")
 f.close()
 
@@ -91,7 +91,7 @@ def server():
             message = message.replace(messageTag, "")
             message = message.replace(nameTag, "")
             print(message + " ist ausgeloggt")
-            f = codecs.open(os.path.dirname(os.path.abspath(__file__))+"/SessionIP.txt", "r", "utf-8")
+            f = codecs.open(os.path.dirname(os.path.abspath(__file__))+"/data/SessionIP.txt", "r", "utf-8")
             content = f.read()
             f.close()
             content = content.replace("\r", "")
@@ -105,7 +105,7 @@ def server():
                         if(jsonObject["Name"] != message.lower()):
                             filteredContent.append('\n{"Name": "' + message.lower() + '", "Ip": "' + address[0] + '"}')
                 for i in filteredContent:
-                    f = codecs.open(os.path.dirname(os.path.abspath(__file__))+"/SessionIP.txt", "a", "utf-8")
+                    f = codecs.open(os.path.dirname(os.path.abspath(__file__))+"/data/SessionIP.txt", "a", "utf-8")
                     f.write(i)
                     f.close()
 
@@ -115,7 +115,7 @@ def server():
             client_socket.close()
             sserver.close()
             print(messagesplit[0] + ": " + messagesplit[1])
-            f = codecs.open(os.path.dirname(os.path.abspath(__file__))+"/data.txt", "a", "utf-8")
+            f = codecs.open(os.path.dirname(os.path.abspath(__file__))+"/data/data.txt", "a", "utf-8")
             f.write('\n{"Sender": "' + messagesplit[0] + '", "Message": "' + messagesplit[1] + '"}')
             f.close()
         elif (nameTag in message):
@@ -140,14 +140,14 @@ def server():
                     y9898.start()
 
             print(address[0] + " ist " + message)
-            f = codecs.open(os.path.dirname(os.path.abspath(__file__))+"/SessionIP.txt", "a", "utf-8")
+            f = codecs.open(os.path.dirname(os.path.abspath(__file__))+"/data/SessionIP.txt", "a", "utf-8")
             f.write('\n{"Name": "' + message.lower() + '", "Ip": "' + address[0] + '"}')
             f.close()
         elif (nameAnswerTag in message):
             message = message.replace(sep, "")
             message = message.replace(nameAnswerTag, "")
             print(address[0] + " ist " + message)
-            f = codecs.open(os.path.dirname(os.path.abspath(__file__))+"/SessionIP.txt", "a", "utf-8")
+            f = codecs.open(os.path.dirname(os.path.abspath(__file__))+"/data/SessionIP.txt", "a", "utf-8")
             f.write('\n{"Name": "' + message.lower() + '", "Ip": "' + address[0] + '"}')
             f.close()
 
@@ -296,7 +296,7 @@ def exitDelay():
 def empfangToIp(empfang):
     global ort
     # ort = "zli"
-    f = codecs.open(os.path.dirname(os.path.abspath(__file__))+"/SessionIP.txt", "r", "utf-8")
+    f = codecs.open(os.path.dirname(os.path.abspath(__file__))+"/data/SessionIP.txt", "r", "utf-8")
     content = f.read()
     f.close()
     content = content.replace("\r", "")
@@ -312,7 +312,7 @@ def empfangToIp(empfang):
     if (StaticipListExists):
         global ort
         # ort = "zli"
-        f = codecs.open(os.path.dirname(os.path.abspath(__file__))+"/StaticIP.txt", "r", "utf-8")
+        f = codecs.open(os.path.dirname(os.path.abspath(__file__))+"/data/StaticIP.txt", "r", "utf-8")
         content = f.read()
         f.close()
         content = content.replace("\r", "")
@@ -417,7 +417,7 @@ def staticIP():
         ort = request.form.get("ort", "")
         name = request.form.get("name", "")
         ip = request.form.get("ip", "")
-        f = codecs.open(os.path.dirname(os.path.abspath(__file__))+"/StaticIP.txt", "a", "utf-8")
+        f = codecs.open(os.path.dirname(os.path.abspath(__file__))+"/data/StaticIP.txt", "a", "utf-8")
         f.write('\n{"Ort": "' + ort.lower() + '", "Name": "' + name.lower() + '", "Ip": "' + ip + '"}')
         f.close()
         return redirect(url_for('send'))
@@ -456,7 +456,7 @@ def empfang():
 
 
     empfangs_list = []
-    f = codecs.open(os.path.dirname(os.path.abspath(__file__))+"/data.txt", "r", "utf-8")
+    f = codecs.open(os.path.dirname(os.path.abspath(__file__))+"/data/data.txt", "r", "utf-8")
     content = f.read()
     f.close()
     content = content.replace("\r", "")
