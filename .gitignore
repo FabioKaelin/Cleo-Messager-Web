@@ -1,5 +1,6 @@
 /__pycache__
-IP.txt
+SessionIP.txt
+StaticIP.txt
 data.txt
 iplist.py
 iplist.txt
