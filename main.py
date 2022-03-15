@@ -1,3 +1,4 @@
+from audioop import reverse
 import codecs
 import json
 import os
@@ -13,9 +14,12 @@ from os.path import exists
 import time
 from pkg_resources import Environment
 
+
 import pyautogui
 from flask import *
 from flask import Flask, redirect, render_template, request, session, url_for
+
+
 
 # sys.dont_write_bytecode = True
 sep = "#SEP#"
@@ -36,29 +40,28 @@ name = oldName
 messages = [("Fabio", "hallo du"),("Chris", "ich mag python")]
 timestamp1 = datetime.now()
 ort = None
+folderPath = os.path.dirname(os.path.abspath(__file__))
 
-dataExists = os.path.isdir('data')
+dataExists = os.path.isdir(folderPath+'/data')
 if (dataExists == False):
-    os.mkdir(os.path.dirname(os.path.abspath(__file__))+"/data")
+    os.mkdir(folderPath+"/data")
 
 
-StaticipListExists = exists(os.path.dirname(os.path.abspath(__file__))+"/data/StaticIP.txt")
+StaticipListExists = exists(folderPath+"/data/StaticIP.txt")
 if (StaticipListExists == False):
-    f = open(os.path.dirname(os.path.abspath(__file__))+"/data/StaticIP.txt", "w")
+    f = open(folderPath+"/data/StaticIP.txt", "w")
     f.write("")
     f.close()
 
-DataListExists = exists(os.path.dirname(os.path.abspath(__file__))+"/data/data.txt")
+DataListExists = exists(folderPath+"/data/data.txt")
 if (DataListExists == False):
-    f = open(os.path.dirname(os.path.abspath(__file__))+"/data/data.txt", "w")
+    f = open(folderPath+"/data/data.txt", "w")
     f.write("")
     f.close()
 
-
-f = open(os.path.dirname(os.path.abspath(__file__))+"/data/SessionIP.txt", "w")
+f = open(folderPath+"/data/SessionIP.txt", "w")
 f.write("")
 f.close()
-
 
 def server():
     port = 9898
@@ -98,7 +101,7 @@ def server():
             message = message.replace(messageTag, "")
             message = message.replace(nameTag, "")
             print(message + " ist ausgeloggt")
-            f = codecs.open(os.path.dirname(os.path.abspath(__file__))+"/data/SessionIP.txt", "r", "utf-8")
+            f = codecs.open(folderPath+"/data/SessionIP.txt", "r", "utf-8")
             content = f.read()
             f.close()
             content = content.replace("\r", "")
@@ -112,7 +115,7 @@ def server():
                         if(jsonObject["Name"] != message.lower()):
                             filteredContent.append('\n{"Name": "' + message.lower() + '", "Ip": "' + address[0] + '"}')
                 for i in filteredContent:
-                    f = codecs.open(os.path.dirname(os.path.abspath(__file__))+"/data/SessionIP.txt", "a", "utf-8")
+                    f = codecs.open(folderPath+"/data/SessionIP.txt", "a", "utf-8")
                     f.write(i)
                     f.close()
 
@@ -122,7 +125,7 @@ def server():
             client_socket.close()
             sserver.close()
             print(messagesplit[0] + ": " + messagesplit[1])
-            f = codecs.open(os.path.dirname(os.path.abspath(__file__))+"/data/data.txt", "a", "utf-8")
+            f = codecs.open(folderPath+"/data/data.txt", "a", "utf-8")
             f.write('\n{"Sender": "' + messagesplit[0] + '", "Message": "' + messagesplit[1] + '"}')
             f.close()
         elif (nameTag in message):
@@ -147,14 +150,14 @@ def server():
                     y9898.start()
 
             print(address[0] + " ist " + message)
-            f = codecs.open(os.path.dirname(os.path.abspath(__file__))+"/data/SessionIP.txt", "a", "utf-8")
+            f = codecs.open(folderPath+"/data/SessionIP.txt", "a", "utf-8")
             f.write('\n{"Name": "' + message.lower() + '", "Ip": "' + address[0] + '"}')
             f.close()
         elif (nameAnswerTag in message):
             message = message.replace(sep, "")
             message = message.replace(nameAnswerTag, "")
             print(address[0] + " ist " + message)
-            f = codecs.open(os.path.dirname(os.path.abspath(__file__))+"/data/SessionIP.txt", "a", "utf-8")
+            f = codecs.open(folderPath+"/data/SessionIP.txt", "a", "utf-8")
             f.write('\n{"Name": "' + message.lower() + '", "Ip": "' + address[0] + '"}')
             f.close()
 
@@ -204,10 +207,9 @@ def answerName(empfang1, port):
             x = "a"
 
 def execCollector():
-    print("vor exeCollecoterexec")
     serverT = threading.Thread(target=server)
     serverT.start()
-    # os.system("python " + os.path.dirname(os.path.abspath(__file__)) + "/collector.py " + os.path.dirname(os.path.abspath(__file__)))
+    # os.system("python " + folderPath + "/collector.py " + folderPath)
 
 def timeController():
     global timestamp1
@@ -295,7 +297,7 @@ def exit9898():
         x = "a"
 
 def clearEmpfang():
-    f = codecs.open(os.path.dirname(os.path.abspath(__file__))+"/data/data.txt", "w", "utf-8")
+    f = codecs.open(folderPath+"/data/data.txt", "w", "utf-8")
     f.write('')
     f.close()
 
@@ -309,7 +311,7 @@ def exitDelay():
 def empfangToIp(empfang):
     global ort
     # ort = "zli"
-    f = codecs.open(os.path.dirname(os.path.abspath(__file__))+"/data/SessionIP.txt", "r", "utf-8")
+    f = codecs.open(folderPath+"/data/SessionIP.txt", "r", "utf-8")
     content = f.read()
     f.close()
     content = content.replace("\r", "")
@@ -325,7 +327,7 @@ def empfangToIp(empfang):
     if (StaticipListExists):
         global ort
         # ort = "zli"
-        f = codecs.open(os.path.dirname(os.path.abspath(__file__))+"/data/StaticIP.txt", "r", "utf-8")
+        f = codecs.open(folderPath+"/data/StaticIP.txt", "r", "utf-8")
         content = f.read()
         f.close()
         content = content.replace("\r", "")
@@ -351,7 +353,6 @@ b.start()
 
 app = Flask(__name__)
 app.secret_key = b'kdue#-_1iefm_.,.3|a654adf'
-
 
 
 
@@ -405,14 +406,49 @@ def index():
         except:
             x = "a"
         return redirect(url_for('send'))
-    f = codecs.open( os.path.dirname(os.path.abspath(__file__))+"/templates/login.html", "r", "utf-8")
+    f = codecs.open( folderPath+"/templates/login.html", "r", "utf-8")
     indexContent = f.read()
     indexContent = indexContent.replace("{title}", "Cleo-Messenger")
     indexContent = indexContent.replace("{localIP}", local_ip)
 
     data = ["Cleo-Messenger", session["local_ip"]]
     return render_template("login.html", data=data)
-    return indexContent
+
+@app.route("/addressBook",methods=['GET', 'POST'])
+def addressBook():
+    reverseContentstatic = []
+    if ("ort" in session):
+        f = codecs.open(folderPath+"/data/StaticIP.txt", "r", "utf-8")
+        content = f.read()
+        f.close()
+        content = content.replace("\r", "")
+        contentArray = content.split("\n")
+        for i in reversed(contentArray):
+            if (len(i) > 5):
+                jsonObject = json.loads(i)
+                if (jsonObject["Ort"] == session["ort"]):
+                    reverseContentstatic.append(jsonObject["Name"] + " --> " + jsonObject["Ip"])
+
+
+    reverseContentSession = []
+    f = codecs.open(folderPath+"/data/SessionIP.txt", "r", "utf-8")
+    content = f.read()
+    f.close()
+    content = content.replace("\r", "")
+    contentArray = content.split("\n")
+    for i in reversed(contentArray):
+        if (len(i) > 5):
+            jsonObject = json.loads(i)
+            if((jsonObject["Name"] + " --> " + jsonObject["Ip"]) in reverseContentstatic):
+                x = "a"
+            else:
+                reverseContentSession.append(jsonObject["Name"] + " --> " + jsonObject["Ip"])
+    textsSession = reverseContentSession
+    textsStatic = reverseContentstatic
+    data = ["Cleo-Messenger", session["local_ip"],len(textsStatic),len(textsSession)]
+
+    # print(reverseContent)
+    return render_template('addressBook.html', textsSession=textsSession, textsStatic=textsStatic, data=data)
 
 @app.route("/logout")
 def logout():
@@ -425,16 +461,32 @@ def logout():
 
 @app.route("/staticIP",methods=['GET', 'POST'])
 def staticIP():
+    data = ["Cleo-Messenger", session["local_ip"]]
     if (request.form.get("ort", "") != "" and request.form.get("name", "") != "" and request.form.get("ip", "") != ""):
+        f = codecs.open(folderPath+"/data/StaticIP.txt", "r", "utf-8")
+        content = f.read()
+        f.close()
+        content = content.replace("\r", "")
+        if (len(content) < 5):
+            return render_template("staticIP.html", data=data)
+        contentArray = content.split("\n")
+        for i in reversed(contentArray):
+            # print(i)
+            if (len(i)> 5):
+                jsonObject = json.loads(i)
+                if(request.form.get("ort").lower() == jsonObject["Ort"].lower()):
+                    if(request.form.get("name").lower() == jsonObject["Name"].lower()):
+                        return render_template("staticIP.html", data=data)
+                    if(request.form.get("ip").lower() == jsonObject["Ip"].lower()):
+                        return render_template("staticIP.html", data=data)
         ort = request.form.get("ort", "")
         name = request.form.get("name", "")
         ip = request.form.get("ip", "")
-        f = codecs.open(os.path.dirname(os.path.abspath(__file__))+"/data/StaticIP.txt", "a", "utf-8")
+        f = codecs.open(folderPath+"/data/StaticIP.txt", "a", "utf-8")
         f.write('\n{"Ort": "' + ort.lower() + '", "Name": "' + name.lower() + '", "Ip": "' + ip + '"}')
         f.close()
         return redirect(url_for('send'))
     else:
-        data = ["Cleo-Messenger", session["local_ip"]]
         return render_template("staticIP.html", data=data)
 
 @app.route("/send", methods=['GET', 'POST'])
@@ -456,6 +508,7 @@ def send():
 
     data = ["Cleo-Messenger", session["local_ip"],session["name"]]
 
+
     if ("ort" in session):
         if (session["ort"] != ""):
             data.append(session["ort"])
@@ -468,7 +521,7 @@ def empfang():
     global timestamp1
     timestamp1 = datetime.now()
     empfangs_list = []
-    f = codecs.open(os.path.dirname(os.path.abspath(__file__))+"/data/data.txt", "r", "utf-8")
+    f = codecs.open(folderPath+"/data/data.txt", "r", "utf-8")
     content = f.read()
     f.close()
     content = content.replace("\r", "")

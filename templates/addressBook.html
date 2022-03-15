@@ -8,6 +8,7 @@
     <link rel="stylesheet" href="../static/styles/send.css">
 
     <title>{{data[0]}}</title>
+
 </head>
 <body>
     <center>
@@ -21,17 +22,25 @@
                 <input class="button" type="submit" value="Send" />
             </form>
         </div></center>
-
         <p>IP: <b>{{data[1]}}</b></p>
         <br>
+        {% if data[2] > 0 %}
+            <h2>Static</h2>
+            {% for text in textsStatic %}
+                {{ text }}<br>
+            {% endfor %}
+        {% endif %}
 
-        <form id="nameInput" action="/staticIP" method="post">
-            Ort: <input id="OrtInputText" type="text" name="ort" placeholder="Ort"><br>
-            Name: <input id="nameInputText" type="text" name="name" placeholder="Name"><br>
-            IP: <input id="nameInputText" type="text" name="ip" placeholder="192.168.1.1"><br>
-            <input class="button" type="submit" value="Submit">
-        </form>
+
+        {% if data[3] > 0 %}
+            <h2>Session</h2>
+            {% for text in textsSession %}
+                {{ text }}<br>
+            {% endfor %}
+        {% endif %}
+
     </center>
+
     <div id="empty"></div>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
 <script>
