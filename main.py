@@ -35,6 +35,11 @@ messages = [("Fabio", "hallo du"),("Chris", "ich mag python")]
 timestamp1 = datetime.now()
 ort = None
 
+dataExists = os.path.isdir('data')
+if (dataExists == False):
+    os.mkdir(os.path.dirname(os.path.abspath(__file__))+"/data")
+
+
 StaticipListExists = exists(os.path.dirname(os.path.abspath(__file__))+"/data/StaticIP.txt")
 if (StaticipListExists == False):
     f = open(os.path.dirname(os.path.abspath(__file__))+"/data/StaticIP.txt", "w")
@@ -212,7 +217,8 @@ def timeController():
         seconds = a_timedelta.total_seconds()
         if (seconds > 10):
             print(str(now) + "||| last: "+ str(timestamp1) + "||| sec: " + str(seconds))
-            os.system("taskkill /F /IM python" + platform.python_version().split(".")[0] + "." + platform.python_version().split(".")[1] + ".exe")
+            exitDelay();
+            # os.system("taskkill /F /IM python" + platform.python_version().split(".")[0] + "." + platform.python_version().split(".")[1] + ".exe")
         time.sleep(5)
 
 def sayIP9898():
