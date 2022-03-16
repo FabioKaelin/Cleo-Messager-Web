@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel= "stylesheet" type= "text/css" href= "{{ url_for('static',filename='styles/chats.css') }}">
+    <link rel="stylesheet" href="../static/styles/chats.css">
+
+    <title>{{data[0]}}</title>
+
+</head>
+<body>
+    <center><h1>{{data[0]}}</h1></center>
+
+    <div class="buttons">
+        <form action="/exit">
+            <input class="button" type="submit" value="Exit" />
+        </form>
+        &emsp;
+        <form action="/send">
+            <input class="button" type="submit" value="Zurück" />
+        </form>
+    </div>
+    <br>
+    <div class="content">
+        <input type="hidden" id="CurrentPerson" name="CurrentPerson" value={{currentPerson}}>
+        <div class="left">
+            {% if data[1] > 0 %}
+                {% for person in personen %}
+                    <div class="personAuswahl" id={{person}}>{{person}}</div>
+                {% endfor %}
+            {% endif %}
+        </div>
+
+        <div class="middle"></div>
+        <div class="right">
+            <div id="place_for_chat">
+            </div>
+            <form id="sendForm" method="get" onsubmit="submitEmpty()" action="/send">
+                Nachricht: <input type="text" onchange="aktualisieren()" id="nachrichtText" name="nachricht" placeholder="Nachricht" autocomplete="off"><br>
+                <input type="hidden" name="lastUpdate" id="lastUpdate"></input>
+                <input type="hidden" name="Type" value="Chats">
+            </form>
+        </div>
+    </div>
+
+    <div id="empty"></div>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+
+
+
+<script>
+
+var elements = document.getElementsByClassName("personAuswahl");
+for (var i = 0; i < elements.length; i++) {
+    if (elements[i].innerHTML == document.getElementById("CurrentPerson").value){
+        elements[i].classList.add("Current");
+    }
+}
+
+
+var myFunction = function() {
+    var person = this.innerText
+    document.getElementById("CurrentPerson").value = person
+
+    var elements = document.getElementsByClassName("personAuswahl");
+    for (var i = 0; i < elements.length; i++) {
+        elements[i].classList.remove("Current");
+    }
+    this.classList.add("Current");
+    reloadJetzt()
+};
+
+for (var i = 0; i < elements.length; i++) {
+    elements[i].addEventListener('click', myFunction, false);
+}
+
+
+</script>
+
+
+
+
+
+
+
+
+
+
+<script>
+    let reloadEmpfang = function(){
+    setTimeout(function(){
+        $.ajax({
+            url: "/chat",
+            type: "get",
+            data:{
+                person: document.getElementById("CurrentPerson").value
+            },
+            success: function(response) {
+                $("#place_for_chat").html(response);
+            },
+            error: function(xhr) {
+            //Do Something to handle error
+            }
+        });
+
+        reloadEmpfang()
+    },3000)
+}
+$.ajax({
+    url: "/chat",
+    type: "get",
+    data:{
+        person: document.getElementById("CurrentPerson").value
+    },
+    success: function(response) {
+        $("#place_for_chat").html(response);
+    },
+    error: function(xhr) {
+    //Do Something to handle error
+    }
+});
+
+let reloadJetzt = function(){
+    $.ajax({
+        url: "/chat",
+        type: "get",
+        data:{
+            person: document.getElementById("CurrentPerson").value
+        },
+        success: function(response) {
+            $("#place_for_chat").html(response);
+        },
+        error: function(xhr) {
+        //Do Something to handle error
+        }
+    });
+}
+
+reloadEmpfang();
+</script>
+
+
+<script>
+    let aktualisieren = function(){
+        document.getElementById("lastUpdate").value = Date.now()
+    }
+
+    let submitEmpty = function(){
+        let nachricht = document.getElementById("nachrichtText").value;
+        let lastUpdate = document.getElementById("lastUpdate").value;
+        if(nachricht != ""){
+            let form = document.getElementById("sendForm");
+            form.setAttribute("action", "/send")
+            form.setAttribute("method", "post")
+            form.submit();
+            submit1();
+        }
+    }
+</script>
+
+</body>
+</html>

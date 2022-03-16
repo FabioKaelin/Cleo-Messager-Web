@@ -1,9 +1,114 @@
+.personAuswahl{
+    width: 100%;
+    padding-top: 5px;
+    padding-bottom: 5px;
+    border-radius: 10px;
+    background-color: rgb(40, 80, 211);
+    text-align: right;
+    margin-bottom: 10px;
+    padding-right: 4px;
+}
+
+.Current{
+    background-color: rgb(21, 45, 126);
+}
+
+.Send{
+    display: flex;
+    justify-content: flex-end;
+}
+
+.SendBack{
+    background-color: rgb(40, 80, 36);
+    border-radius: 10px;
+}
+
+.EmpfangBack{
+    background-color: rgb(35, 55, 61);
+    border-radius: 10px;
+}
+
+.Empfang{
+    display: flex;
+    justify-content: flex-start;
+}
+
+#place_for_chat{
+    background-color: rgb(40, 80, 211);
+    width: 100%;
+    height: 100%;
+    padding: 10px;
+    border-radius: 10px;
+    overflow-y:auto;
+}
+
+.nachrichtText{
+    padding-bottom: 0px;
+}
+
+.person{
+    font-size: 50%;
+    height: min-content;
+    margin-top: 0px;
+    padding-top: 0px;
+}
+
+.nachricht{
+    display: flex;
+    flex-direction:column;
+    width: min-content;
+    margin-bottom: 10px;
+    padding-right: 4px;
+    height: min-content;
+    padding-left: 4px;
+    margin-top: 0px;
+
+}
+
+.content {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    height: 70%;
+
+}
+
+
+
+.middle{
+    order: 2;
+    width: 2%;
+}
+
+
+
+.left{
+    margin-left: 2%;
+    order: 1;
+    width: 30%;
+    /* align-items: center; */
+    text-align: right;
+}
+
+.right{
+    margin-right: 3%;
+    order: 2;
+    width: 60%;}
+
+
+
+
 body{
     background-color: rgb(54, 73, 78);
     color: rgb(40, 200, 211);
     font-family: 'Mochiy Pop P One', sans-serif;
     font-weight: bolder;
     font-size:x-large;
+    height: 96%;
+}
+
+html{
+    height: 99%;
 }
 
 form>input[type="text"]{
@@ -46,33 +151,22 @@ input::placeholder { /* Chrome, Firefox, Opera, Safari 10.1+ */
     font-weight: bolder;
 }
 
-.content {
-    display: flex;
-    flex-direction: row;
-    flex-wrap:wrap;
+
+
+input[type="text"]{
+    background-color: rgb(40, 200, 211);
+    color: rgb(40, 80, 211);
+    border-radius: 10px;
+    padding-left: 10px;
+    font-family: 'Mochiy Pop P One', sans-serif;
+    width: 100%;
+    height: 2em;
+    font-weight: bolder;
+    box-shadow: none;
+    border: 1px solid rgb(40, 80, 211);
 }
 
 
-
-.middle{
-    order: 2;
-    width: 2%;
-}
-
-
-
-.left{
-    margin-left: 3%;
-    order: 1;
-    width: 44%;
-    /* align-items: center; */
-    text-align: right;
-}
-
-.right{
-    margin-right: 3%;
-    order: 2;
-    width: 42%;}
 
 
 
@@ -98,9 +192,9 @@ h1{
 
 
 
-.buttons>form{
+/* .buttons>form{
     order: 2S;
-}
+} */
 
 .button {
     background-color: rgb(40, 200, 211);
@@ -120,9 +214,7 @@ h1{
     display: inline-block;
 }
 
-.place_for_empfang{
-    order: 1;
-}
+
 
 ::-webkit-autofill{
 

@@ -126,7 +126,7 @@ def server():
             sserver.close()
             print(messagesplit[0] + ": " + messagesplit[1])
             f = codecs.open(folderPath+"/data/data.txt", "a", "utf-8")
-            f.write('\n{"Sender": "' + messagesplit[0] + '", "Message": "' + messagesplit[1] + '"}')
+            f.write('\n{"Sender": "' + messagesplit[0] + '", "Message": "' + messagesplit[1] + '", "Art": "Empfang"}')
             f.close()
         elif (nameTag in message):
             message = message.replace(sep, "")
@@ -176,7 +176,15 @@ def sendMessage(message, empfang, name):
         # print(empfang)
         # print(port)
         # print(s)
+
+        # print(messagesplit[0] + ": " + messagesplit[1])
+
         ip = empfangToIp(empfang)
+        EmpfangName = IpToName(ip)
+        global folderPath
+        f = codecs.open(folderPath+"/data/data.txt", "a", "utf-8")
+        f.write('\n{"Sender": "' + EmpfangName + '", "Message": "' + message + '", "Art": "Send"}')
+        f.close()
         s.connect((ip, port))
         s.send(bytes(messageTag, 'UTF-8'))
         s.send(bytes(name, 'UTF-8'))
@@ -343,6 +351,42 @@ def empfangToIp(empfang):
                         return jsonObject["Ip"]
     return empfang
 
+def IpToName(ip):
+    global ort
+    # ort = "zli"
+    f = codecs.open(folderPath+"/data/SessionIP.txt", "r", "utf-8")
+    content = f.read()
+    f.close()
+    content = content.replace("\r", "")
+    if (len(content) < 5):
+        return empfang
+    contentArray = content.split("\n")
+    for i in reversed(contentArray):
+        # print(i)
+        if (len(i)> 5):
+            jsonObject = json.loads(i)
+            if(jsonObject["Ip"]== ip.lower()):
+                return jsonObject["Name"]
+    if (StaticipListExists):
+        global ort
+        # ort = "zli"
+        f = codecs.open(folderPath+"/data/StaticIP.txt", "r", "utf-8")
+        content = f.read()
+        f.close()
+        content = content.replace("\r", "")
+        if (len(content) < 5):
+            return empfang
+        contentArray = content.split("\n")
+        for i in reversed(contentArray):
+            # print(i)
+            if (len(i)> 5):
+                jsonObject = json.loads(i)
+                if (jsonObject["Ort"] == ort.lower()):
+                    if(jsonObject["Ip"]== ip.lower()):
+                        return jsonObject["Name"]
+    return empfang
+
+
 
 
 local_ip = getIP()
@@ -413,6 +457,67 @@ def index():
 
     data = ["Cleo-Messenger", session["local_ip"]]
     return render_template("login.html", data=data)
+
+@app.route('/chat')
+def chat():
+    global timestamp1
+    timestamp1 = datetime.now()
+    CurrentPerson = request.args.get('person')
+    session["CurrentPerson"] = CurrentPerson
+    # print(CurrentPerson)
+
+    nachrichtenList = []
+    if ("ort" in session):
+        f = codecs.open(folderPath+"/data/data.txt", "r", "utf-8")
+        content = f.read()
+        f.close()
+        content = content.replace("\r", "")
+        contentArray = content.split("\n")
+        for i in contentArray:
+            if (len(i) > 5):
+                jsonObject = json.loads(i)
+                # print(jsonObject)
+                if (jsonObject["Sender"] == CurrentPerson):
+                    nachrichtenList.append((jsonObject["Sender"], jsonObject["Message"], jsonObject["Art"]))
+
+    # print(nachrichtenList)
+    global name
+    nachrichten = []
+    for i in nachrichtenList:
+        if(i[2] == "Send"):
+            j = list(i)
+            j[0] = name
+            i = tuple(j)
+            # print(i)
+        nachrichten.append(i)
+    return render_template('chat.html', nachrichten=nachrichten)
+
+@app.route("/chats",methods=['GET', 'POST'])
+def chats():
+    if ("CurrentPerson" in session):
+        currentPerson = session["CurrentPerson"]
+    personenList = []
+    if ("ort" in session):
+        f = codecs.open(folderPath+"/data/data.txt", "r", "utf-8")
+        content = f.read()
+        f.close()
+        content = content.replace("\r", "")
+        contentArray = content.split("\n")
+        for i in reversed(contentArray):
+            if (len(i) > 5):
+                jsonObject = json.loads(i)
+                if (jsonObject["Sender"] in personenList):
+                    x = "a"
+                else:
+                    personenList.append(jsonObject["Sender"])
+    print(personenList)
+    data = ["Cleo-Messenger", len(personenList)]
+    personen = personenList
+    if (currentPerson in personen):
+        x = "a"
+    else:
+        currentPerson = personen[0]
+    return render_template('chats.html', personen=personen, data=data, currentPerson=currentPerson)
 
 @app.route("/addressBook",methods=['GET', 'POST'])
 def addressBook():
@@ -491,27 +596,36 @@ def staticIP():
 
 @app.route("/send", methods=['GET', 'POST'])
 def send():
-    global oldUpdate
-    lastUpdate = request.form.get("lastUpdate", "")
-    if(oldUpdate != lastUpdate):
-        oldUpdate = lastUpdate
-        empfang = request.form.get("empfang", "")
-        nachricht = request.form.get("nachricht", "")
-        # print(lastUpdate)
-        if(empfang and nachricht):
-            # empfang = session["empfang"]
-            # nachricht = session["nachricht"]
-            print(empfang + " | bekommt | " + nachricht)
-            # print("Es wird eine Nachricht gesendet")
-            sendMessage(nachricht, empfang, session['name'])
+    if (request.form.get("Type") == "Send"):
+        global oldUpdate
+        lastUpdate = request.form.get("lastUpdate", "")
+        if(oldUpdate != lastUpdate):
+            oldUpdate = lastUpdate
+            empfang = request.form.get("empfang", "")
+            nachricht = request.form.get("nachricht", "")
+            # print(lastUpdate)
+            if(empfang and nachricht):
+                # empfang = session["empfang"]
+                # nachricht = session["nachricht"]
+                print(empfang + " | bekommt | " + nachricht)
+                # print("Es wird eine Nachricht gesendet")
+                sendMessage(nachricht, empfang, session['name'])
 
+
+
+
+        data = ["Cleo-Messenger", session["local_ip"],session["name"]]
+        if ("ort" in session):
+            if (session["ort"] != ""):
+                data.append(session["ort"])
+        return render_template("send.html", data=data)
+    if (request.form.get("Type") == "Chats"):
+        nachricht = request.form.get("nachricht", "")
+        empfang = session["CurrentPerson"]
+        sendMessage(nachricht, empfang, session['name'])
+        return redirect(url_for('chats'))
 
     data = ["Cleo-Messenger", session["local_ip"],session["name"]]
-
-
-    if ("ort" in session):
-        if (session["ort"] != ""):
-            data.append(session["ort"])
     return render_template("send.html", data=data)
 
 @app.route('/empfang')
@@ -534,7 +648,7 @@ def empfang():
         # print(i)
         if (len(i) > 5):
             jsonObject = json.loads(i)
-            if ("Message" in jsonObject):
+            if ("Message" in jsonObject and jsonObject["Art"] == "Empfang"):
                 reverseContent.append(jsonObject["Sender"] + ": " + jsonObject["Message"])
     # print(reverseContent)
     return render_template('empfang.html', empfangs=reverseContent)
