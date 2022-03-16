@@ -33,7 +33,7 @@ nameTag = "#NAME#"
 name = "unbekannt"
 port = 9898
 buffer = 1024
-oldName = "FabioDef"
+oldName = "FabioDev"
 notende = True
 oldUpdate = "1"
 name = oldName
@@ -388,6 +388,7 @@ def index():
                     return redirect(url_for('send'))
     session['local_ip'] = local_ip.lower()
     if ('name' in session):
+        name = session["name"]
         if ("ort" in session):
             ort = session['ort'].lower()
         else:

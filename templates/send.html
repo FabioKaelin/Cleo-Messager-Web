@@ -52,8 +52,8 @@
                 {% endif %}
                 <h2>Sender</h2>
                 <form id="sendForm" method="get" action="/send">
-                    Empfänger: <input type="text" onchange="aktualisieren()" id="empfang" name="empfang" placeholder="Empfänger"><br>
-                    Nachricht: <input type="text" onchange="aktualisieren()" id="nachricht" name="nachricht" placeholder="Nachricht" autocomplete="off"><br>
+                    Empfänger: <input type="text" onchange="aktualisieren()" id="empfang" name="empfang" maxlength="20" placeholder="Empfänger"><br>
+                    Nachricht: <input type="text" onchange="aktualisieren()" id="nachricht" name="nachricht" maxlength="40" placeholder="Nachricht" autocomplete="off"><br>
                     <input type="hidden" name="lastUpdate" id="lastUpdate"></input>
                     <input type="hidden" name="Type" value="Send">
                     <button class="button"  onclick="submitEmpty()" >Bestätigen</button>
