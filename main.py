@@ -350,7 +350,12 @@ def IpToName(ip):
                         return jsonObject["Name"]
     return empfang
 
-
+def eingabeUeberpruefung(eingabe):
+    unerlaubtArray = ['"', "\\", sep, end, nameAnswerTag, nameTag, messageTag, exitTag, logoutTag]
+    for i in unerlaubtArray:
+        if i in eingabe:
+            return False
+    return True
 
 
 local_ip = getIP()
@@ -370,55 +375,56 @@ def index():
     global name
     global ort
     local_ip = getIP()
-    if ('local_ip' in session):
-        if (session['local_ip'] == local_ip):
-            if ("name" in session):
-                if ("ort" in session):
-                    ort = session['ort'].lower()
-                    name = session['name'].lower()
-                    try:
-                        s = socket.socket()
-                        # s.settimeout(0.1)
-                        s.connect((local_ip, 9898))
-                        s.send(bytes(nameTag + sep + name + end, 'UTF-8'))
-                        s.close()
-                        del s
-                    except:
-                        x = "a"
-                    return redirect(url_for('send'))
-    session['local_ip'] = local_ip.lower()
-    if ('name' in session):
-        name = session["name"]
-        if ("ort" in session):
-            ort = session['ort'].lower()
-        else:
+    if(eingabeUeberpruefung(session["ort"]) and eingabeUeberpruefung(session["name"])):
+        if ('local_ip' in session):
+            if (session['local_ip'] == local_ip):
+                if ("name" in session):
+                    if ("ort" in session):
+                        ort = session['ort'].lower()
+                        name = session['name'].lower()
+                        try:
+                            s = socket.socket()
+                            # s.settimeout(0.1)
+                            s.connect((local_ip, 9898))
+                            s.send(bytes(nameTag + sep + name + end, 'UTF-8'))
+                            s.close()
+                            del s
+                        except:
+                            x = "a"
+                        return redirect(url_for('send'))
+        session['local_ip'] = local_ip.lower()
+        if ('name' in session):
+            name = session["name"]
+            if ("ort" in session):
+                ort = session['ort'].lower()
+            else:
+                ort = request.form.get("ort", "").lower()
+                session["ort"] = ort
+            try:
+                s = socket.socket()
+                # s.settimeout(0.001)
+                s.connect((local_ip, 9898))
+                s.send(bytes(nameTag + sep + name + end, 'UTF-8'))
+                s.close()
+                del s
+            except:
+                x = "a"
+            return redirect(url_for('send'))
+        if (request.form.get("name", "") != "" and request.form.get("ort", "") != ""):
             ort = request.form.get("ort", "").lower()
-            session["ort"] = ort
-        try:
-            s = socket.socket()
-            # s.settimeout(0.001)
-            s.connect((local_ip, 9898))
-            s.send(bytes(nameTag + sep + name + end, 'UTF-8'))
-            s.close()
-            del s
-        except:
-            x = "a"
-        return redirect(url_for('send'))
-    if (request.form.get("name", "") != "" and request.form.get("ort", "") != ""):
-        ort = request.form.get("ort", "").lower()
-        session['ort'] = ort
-        name = request.form.get("name", "").lower()
-        session['name'] = name
-        try:
-            s = socket.socket()
-            # s.settimeout(0.001)
-            s.connect((local_ip, 9898))
-            s.send(bytes(nameTag + sep + name + end, 'UTF-8'))
-            s.close()
-            del s
-        except:
-            x = "a"
-        return redirect(url_for('send'))
+            session['ort'] = ort
+            name = request.form.get("name", "").lower()
+            session['name'] = name
+            try:
+                s = socket.socket()
+                # s.settimeout(0.001)
+                s.connect((local_ip, 9898))
+                s.send(bytes(nameTag + sep + name + end, 'UTF-8'))
+                s.close()
+                del s
+            except:
+                x = "a"
+            return redirect(url_for('send'))
     f = codecs.open( folderPath+"/templates/login.html", "r", "utf-8")
     indexContent = f.read()
     indexContent = indexContent.replace("{title}", "Cleo-Messenger")
@@ -476,7 +482,10 @@ def chats():
     if ("CurrentPerson" in session):
         currentPerson = session["CurrentPerson"]
     else:
-        currentPerson = personen[0]
+        if (len(personen) > 0):
+            currentPerson = personen[0]
+        else:
+            currentPerson = session["name"]
         session["CurrentPerson"] = currentPerson
     return render_template('chats.html', personen=personen, data=data, currentPerson=currentPerson)
 
