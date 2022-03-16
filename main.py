@@ -72,19 +72,14 @@ def server():
         sserver.bind((local_ip, port))
         sserver.listen()
         client_socket, address = sserver.accept()
-        # print("Hallo")
 
         message = ""
         while True:
             text = client_socket.recv(buffer).decode()
-            # print(text)
             message += text
             if  end in text:
                 break
-        # print(message)
         message = message.replace(end, "")
-        # print(message)
-        # print("exitTag: "+ str(exitTag) + "|||message: " + str(message) + "|||address[0]: " + str(address[0]) + "|||local_ip: " + str(local_ip))
         if (exitTag in message and address[0] == local_ip):
             if (address[0] == local_ip):
                 message = message.replace(exitTag, "")
@@ -109,11 +104,14 @@ def server():
                 contentArray = content.split("\n")
                 filteredContent = []
                 for i in reversed(contentArray):
-                    # print(i)
                     if (len(i)> 5):
                         jsonObject = json.loads(i)
                         if(jsonObject["Name"] != message.lower()):
                             filteredContent.append('\n{"Name": "' + message.lower() + '", "Ip": "' + address[0] + '"}')
+
+                f = codecs.open(folderPath+"/data/SessionIP.txt", "w", "utf-8")
+                f.write("")
+                f.close()
                 for i in filteredContent:
                     f = codecs.open(folderPath+"/data/SessionIP.txt", "a", "utf-8")
                     f.write(i)
@@ -126,7 +124,7 @@ def server():
             sserver.close()
             print(messagesplit[0] + ": " + messagesplit[1])
             f = codecs.open(folderPath+"/data/data.txt", "a", "utf-8")
-            f.write('\n{"Sender": "' + messagesplit[0] + '", "Message": "' + messagesplit[1] + '", "Art": "Empfang"}')
+            f.write('\n{"Sender": "' + messagesplit[0].lower() + '", "Message": "' + messagesplit[1] + '", "Art": "Empfang"}')
             f.close()
         elif (nameTag in message):
             message = message.replace(sep, "")
@@ -134,18 +132,10 @@ def server():
             if (address[0] == local_ip):
                 global name
                 name = message
-                # print("Lokale IP")
-
-                # z = threading.Thread(target=sayIP9899)
-                # z.start()
                 z2 = threading.Thread(target=sayIP9898)
                 z2.start()
             else:
-                # print("Andere IP")
                 if(name != "unbekannt"):
-                    # print("name ist nicht unbekannt")
-                    # y9899 = threading.Thread(target=answerName, args=(address[0],9899,))
-                    # y9899.start()
                     y9898 = threading.Thread(target=answerName, args=(address[0],9898,))
                     y9898.start()
 
@@ -173,11 +163,7 @@ def getIP():
 def sendMessage(message, empfang, name):
     try:
         s = socket.socket()
-        # print(empfang)
-        # print(port)
-        # print(s)
-
-        # print(messagesplit[0] + ": " + messagesplit[1])
+        s.settimeout(0.1)
 
         ip = empfangToIp(empfang)
         EmpfangName = IpToName(ip)
@@ -217,7 +203,6 @@ def answerName(empfang1, port):
 def execCollector():
     serverT = threading.Thread(target=server)
     serverT.start()
-    # os.system("python " + folderPath + "/collector.py " + folderPath)
 
 def timeController():
     global timestamp1
@@ -225,12 +210,10 @@ def timeController():
     while True:
         now = datetime.now()
         a_timedelta = now - timestamp1
-        # print(str(now)+"|||"+ str(a_timedelta))
         seconds = a_timedelta.total_seconds()
         if (seconds > 10):
             print(str(now) + "||| last: "+ str(timestamp1) + "||| sec: " + str(seconds))
             exitDelay();
-            # os.system("taskkill /F /IM python" + platform.python_version().split(".")[0] + "." + platform.python_version().split(".")[1] + ".exe")
         time.sleep(5)
 
 def sayIP9898():
@@ -240,7 +223,6 @@ def sayIP9898():
             ip = ip.split(".")
             empfang1 = str(ip[0]) + "." + str(ip[1]) + "." + str(ip[2]) + "." + str(x)
             if (empfang1 != local_ip):
-                # print(empfang1)
                 s = socket.socket()
                 s.settimeout(0.04)
                 s.connect((empfang1, 9898))
@@ -256,7 +238,6 @@ def sayIP9899():
             ip = local_ip
             ip = ip.split(".")
             empfang1 = str(ip[0]) + "." + str(ip[1]) + "." + str(ip[2]) + "." + str(x)
-            # print(empfang1)
             s = socket.socket()
             s.settimeout(0.03)
             s.connect((empfang1, 9899))
@@ -274,14 +255,8 @@ def logoutIP9898():
             ip = local_ip
             ip = ip.split(".")
             empfang1 = str(ip[0]) + "." + str(ip[1]) + "." + str(ip[2]) + "." + str(x)
-            # host = getIP()
-            # print(empfang1)
-            # print(type(logoutTag))
-            # print(type(sep))
-            # print(type(name))
             message = logoutTag + sep + nameuse
 
-            # print(message)
             s = socket.socket()
             s.settimeout(0.01)
             s.connect((empfang1, 9898))
@@ -294,10 +269,7 @@ def logoutIP9898():
 def exit9898():
     try:
         ip = local_ip
-        # print(ip)
-        # host = getIP()
         s = socket.socket()
-        # s.settimeout(0.1)
         s.connect((ip, 9898))
         s.send(bytes(exitTag + sep + name + end, 'UTF-8'))
         s.close()
@@ -318,7 +290,6 @@ def exitDelay():
 
 def empfangToIp(empfang):
     global ort
-    # ort = "zli"
     f = codecs.open(folderPath+"/data/SessionIP.txt", "r", "utf-8")
     content = f.read()
     f.close()
@@ -327,14 +298,12 @@ def empfangToIp(empfang):
         return empfang
     contentArray = content.split("\n")
     for i in reversed(contentArray):
-        # print(i)
         if (len(i)> 5):
             jsonObject = json.loads(i)
-            if(jsonObject["Name"]== empfang.lower()):
+            if(jsonObject["Name"].lower() == empfang.lower()):
                 return jsonObject["Ip"]
     if (StaticipListExists):
         global ort
-        # ort = "zli"
         f = codecs.open(folderPath+"/data/StaticIP.txt", "r", "utf-8")
         content = f.read()
         f.close()
@@ -343,17 +312,15 @@ def empfangToIp(empfang):
             return empfang
         contentArray = content.split("\n")
         for i in reversed(contentArray):
-            # print(i)
             if (len(i)> 5):
                 jsonObject = json.loads(i)
-                if (jsonObject["Ort"] == ort.lower()):
-                    if(jsonObject["Name"]== empfang.lower()):
+                if (jsonObject["Ort"].lower() == ort.lower()):
+                    if(jsonObject["Name"].lower() == empfang.lower()):
                         return jsonObject["Ip"]
     return empfang
 
 def IpToName(ip):
     global ort
-    # ort = "zli"
     f = codecs.open(folderPath+"/data/SessionIP.txt", "r", "utf-8")
     content = f.read()
     f.close()
@@ -362,14 +329,12 @@ def IpToName(ip):
         return empfang
     contentArray = content.split("\n")
     for i in reversed(contentArray):
-        # print(i)
         if (len(i)> 5):
             jsonObject = json.loads(i)
-            if(jsonObject["Ip"]== ip.lower()):
+            if(jsonObject["Ip"].lower() == ip.lower()):
                 return jsonObject["Name"]
     if (StaticipListExists):
         global ort
-        # ort = "zli"
         f = codecs.open(folderPath+"/data/StaticIP.txt", "r", "utf-8")
         content = f.read()
         f.close()
@@ -378,11 +343,10 @@ def IpToName(ip):
             return empfang
         contentArray = content.split("\n")
         for i in reversed(contentArray):
-            # print(i)
             if (len(i)> 5):
                 jsonObject = json.loads(i)
-                if (jsonObject["Ort"] == ort.lower()):
-                    if(jsonObject["Ip"]== ip.lower()):
+                if (jsonObject["Ort"].lower() == ort.lower()):
+                    if(jsonObject["Ip"].lower() == ip.lower()):
                         return jsonObject["Name"]
     return empfang
 
@@ -403,28 +367,32 @@ app.secret_key = b'kdue#-_1iefm_.,.3|a654adf'
 
 @app.route("/",methods=['GET', 'POST'])
 def index():
-    # print(session)
     global name
     global ort
     local_ip = getIP()
     if ('local_ip' in session):
         if (session['local_ip'] == local_ip):
             if ("name" in session):
-                ort = session['ort']
-                name = session['name']
-                try:
-                    s = socket.socket()
-                    # s.settimeout(0.001)
-                    s.connect((local_ip, 9898))
-                    s.send(bytes(nameTag + sep + name + end, 'UTF-8'))
-                    s.close()
-                    del s
-                except:
-                    x = "a"
-                return redirect(url_for('send'))
-    session['local_ip'] = local_ip
+                if ("ort" in session):
+                    ort = session['ort'].lower()
+                    name = session['name'].lower()
+                    try:
+                        s = socket.socket()
+                        # s.settimeout(0.1)
+                        s.connect((local_ip, 9898))
+                        s.send(bytes(nameTag + sep + name + end, 'UTF-8'))
+                        s.close()
+                        del s
+                    except:
+                        x = "a"
+                    return redirect(url_for('send'))
+    session['local_ip'] = local_ip.lower()
     if ('name' in session):
-        ort = session['ort']
+        if ("ort" in session):
+            ort = session['ort'].lower()
+        else:
+            ort = request.form.get("ort", "").lower()
+            session["ort"] = ort
         try:
             s = socket.socket()
             # s.settimeout(0.001)
@@ -435,10 +403,10 @@ def index():
         except:
             x = "a"
         return redirect(url_for('send'))
-    if (request.form.get("name", "") != ""):
-        ort = request.form.get("ort", "")
+    if (request.form.get("name", "") != "" and request.form.get("ort", "") != ""):
+        ort = request.form.get("ort", "").lower()
         session['ort'] = ort
-        name = request.form.get("name", "")
+        name = request.form.get("name", "").lower()
         session['name'] = name
         try:
             s = socket.socket()
@@ -462,10 +430,8 @@ def index():
 def chat():
     global timestamp1
     timestamp1 = datetime.now()
-    CurrentPerson = request.args.get('person')
+    CurrentPerson = request.args.get('person').lower()
     session["CurrentPerson"] = CurrentPerson
-    # print(CurrentPerson)
-
     nachrichtenList = []
     if ("ort" in session):
         f = codecs.open(folderPath+"/data/data.txt", "r", "utf-8")
@@ -476,26 +442,20 @@ def chat():
         for i in contentArray:
             if (len(i) > 5):
                 jsonObject = json.loads(i)
-                # print(jsonObject)
                 if (jsonObject["Sender"] == CurrentPerson):
-                    nachrichtenList.append((jsonObject["Sender"], jsonObject["Message"], jsonObject["Art"]))
-
-    # print(nachrichtenList)
+                    nachrichtenList.append((jsonObject["Sender"].capitalize(), jsonObject["Message"], jsonObject["Art"]))
     global name
     nachrichten = []
     for i in nachrichtenList:
         if(i[2] == "Send"):
             j = list(i)
-            j[0] = name
+            j[0] = name.capitalize()
             i = tuple(j)
-            # print(i)
         nachrichten.append(i)
     return render_template('chat.html', nachrichten=nachrichten)
 
 @app.route("/chats",methods=['GET', 'POST'])
 def chats():
-    if ("CurrentPerson" in session):
-        currentPerson = session["CurrentPerson"]
     personenList = []
     if ("ort" in session):
         f = codecs.open(folderPath+"/data/data.txt", "r", "utf-8")
@@ -506,17 +466,17 @@ def chats():
         for i in reversed(contentArray):
             if (len(i) > 5):
                 jsonObject = json.loads(i)
-                if (jsonObject["Sender"] in personenList):
+                if (jsonObject["Sender"].capitalize() in personenList):
                     x = "a"
                 else:
-                    personenList.append(jsonObject["Sender"])
-    print(personenList)
+                    personenList.append(jsonObject["Sender"].capitalize())
     data = ["Cleo-Messenger", len(personenList)]
     personen = personenList
-    if (currentPerson in personen):
-        x = "a"
+    if ("CurrentPerson" in session):
+        currentPerson = session["CurrentPerson"]
     else:
         currentPerson = personen[0]
+        session["CurrentPerson"] = currentPerson
     return render_template('chats.html', personen=personen, data=data, currentPerson=currentPerson)
 
 @app.route("/addressBook",methods=['GET', 'POST'])
@@ -531,7 +491,7 @@ def addressBook():
         for i in reversed(contentArray):
             if (len(i) > 5):
                 jsonObject = json.loads(i)
-                if (jsonObject["Ort"] == session["ort"]):
+                if (jsonObject["Ort"] == session["ort"].lower()):
                     reverseContentstatic.append(jsonObject["Name"] + " --> " + jsonObject["Ip"])
 
 
@@ -552,7 +512,6 @@ def addressBook():
     textsStatic = reverseContentstatic
     data = ["Cleo-Messenger", session["local_ip"],len(textsStatic),len(textsSession)]
 
-    # print(reverseContent)
     return render_template('addressBook.html', textsSession=textsSession, textsStatic=textsStatic, data=data)
 
 @app.route("/logout")
@@ -576,7 +535,6 @@ def staticIP():
             return render_template("staticIP.html", data=data)
         contentArray = content.split("\n")
         for i in reversed(contentArray):
-            # print(i)
             if (len(i)> 5):
                 jsonObject = json.loads(i)
                 if(request.form.get("ort").lower() == jsonObject["Ort"].lower()):
@@ -584,9 +542,9 @@ def staticIP():
                         return render_template("staticIP.html", data=data)
                     if(request.form.get("ip").lower() == jsonObject["Ip"].lower()):
                         return render_template("staticIP.html", data=data)
-        ort = request.form.get("ort", "")
-        name = request.form.get("name", "")
-        ip = request.form.get("ip", "")
+        ort = request.form.get("ort", "").lower()
+        name = request.form.get("name", "").lower()
+        ip = request.form.get("ip", "").lower()
         f = codecs.open(folderPath+"/data/StaticIP.txt", "a", "utf-8")
         f.write('\n{"Ort": "' + ort.lower() + '", "Name": "' + name.lower() + '", "Ip": "' + ip + '"}')
         f.close()
@@ -598,34 +556,31 @@ def staticIP():
 def send():
     if (request.form.get("Type") == "Send"):
         global oldUpdate
-        lastUpdate = request.form.get("lastUpdate", "")
+        lastUpdate = request.form.get("lastUpdate", "").lower()
         if(oldUpdate != lastUpdate):
             oldUpdate = lastUpdate
-            empfang = request.form.get("empfang", "")
+            empfang = request.form.get("empfang", "").lower()
             nachricht = request.form.get("nachricht", "")
-            # print(lastUpdate)
             if(empfang and nachricht):
-                # empfang = session["empfang"]
-                # nachricht = session["nachricht"]
                 print(empfang + " | bekommt | " + nachricht)
-                # print("Es wird eine Nachricht gesendet")
                 sendMessage(nachricht, empfang, session['name'])
 
-
-
-
-        data = ["Cleo-Messenger", session["local_ip"],session["name"]]
+        data = ["Cleo-Messenger", session["local_ip"],session["name"].capitalize()]
         if ("ort" in session):
             if (session["ort"] != ""):
                 data.append(session["ort"])
         return render_template("send.html", data=data)
+
     if (request.form.get("Type") == "Chats"):
         nachricht = request.form.get("nachricht", "")
         empfang = session["CurrentPerson"]
         sendMessage(nachricht, empfang, session['name'])
         return redirect(url_for('chats'))
 
-    data = ["Cleo-Messenger", session["local_ip"],session["name"]]
+    data = ["Cleo-Messenger", session["local_ip"],session["name"].capitalize()]
+    if ("ort" in session):
+        if (session["ort"] != ""):
+            data.append(session["ort"].capitalize())
     return render_template("send.html", data=data)
 
 @app.route('/empfang')
@@ -639,18 +594,15 @@ def empfang():
     content = f.read()
     f.close()
     content = content.replace("\r", "")
-    # print(len(content))
     if (len(content) < 5):
         return render_template('empty.html')
     contentArray = content.split("\n")
     reverseContent = []
     for i in reversed(contentArray):
-        # print(i)
         if (len(i) > 5):
             jsonObject = json.loads(i)
             if ("Message" in jsonObject and jsonObject["Art"] == "Empfang"):
-                reverseContent.append(jsonObject["Sender"] + ": " + jsonObject["Message"])
-    # print(reverseContent)
+                reverseContent.append(jsonObject["Sender"].capitalize() + ": " + jsonObject["Message"])
     return render_template('empfang.html', empfangs=reverseContent)
 
 @app.route('/empty')

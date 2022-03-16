@@ -56,7 +56,6 @@
 .nachricht{
     display: flex;
     flex-direction:column;
-    width: min-content;
     margin-bottom: 10px;
     padding-right: 4px;
     height: min-content;
