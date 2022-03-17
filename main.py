@@ -30,6 +30,7 @@ logoutTag = "#LOGOUT#"
 exitTag = "#EXIT#"
 nameTag = "#NAME#"
 
+exitTrue = False
 name = "unbekannt"
 port = 9898
 buffer = 1024
@@ -41,7 +42,7 @@ messages = [("Fabio", "hallo du"),("Chris", "ich mag python")]
 timestamp1 = datetime.now()
 ort = None
 folderPath = os.path.dirname(os.path.abspath(__file__))
-
+programmende = False
 dataExists = os.path.isdir(folderPath+'/data')
 if (dataExists == False):
     os.mkdir(folderPath+"/data")
@@ -62,23 +63,31 @@ if (DataListExists == False):
 f = open(folderPath+"/data/SessionIP.txt", "w")
 f.write("")
 f.close()
+sserver = ""
+
 
 def server():
+    serverWhile = True
     port = 9898
     buffer = 1024
     # try:
-    while True:
+    while serverWhile:
+        global sserver
         sserver = socket.socket()
+        sserver.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+
         sserver.bind((local_ip, port))
         sserver.listen()
         client_socket, address = sserver.accept()
 
         message = ""
-        while True:
+        endisFalse = False
+        while endisFalse == False:
             text = client_socket.recv(buffer).decode()
             message += text
             if  end in text:
-                break
+                # break
+                endisFalse = True
         message = message.replace(end, "")
         if (exitTag in message and address[0] == local_ip):
             if (address[0] == local_ip):
@@ -88,7 +97,10 @@ def server():
                 message = message.replace(nameTag, "")
                 message = message.replace(messageTag, "")
                 print(message + " ist ausgeloggt und das Programm wird beendet")
-                exit()
+                # exit()
+
+                print("Server Wird Beendet")
+                serverWhile = False
         if (logoutTag in message):
             message = message.replace(exitTag, "")
             message = message.replace(logoutTag, "")
@@ -155,40 +167,48 @@ def server():
         del client_socket
         del address
 
+def closeServer():
+    global local_ip
+    s = socket.socket()
+    s.settimeout(0.04)
+    s.connect((local_ip, 9898))
+    s.send(bytes(exitTag + sep + name + end, 'UTF-8'))
+    s.close()
+
 def getIP():
     s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
     s.connect(("8.8.8.8", 80))
     return s.getsockname()[0]
 
 def sendMessage(message, empfang, name):
-    try:
-        s = socket.socket()
-        s.settimeout(0.1)
+    # try:
+    s = socket.socket()
+    s.settimeout(0.1)
 
-        ip = empfangToIp(empfang)
-        EmpfangName = IpToName(ip)
-        global folderPath
-        f = codecs.open(folderPath+"/data/data.txt", "a", "utf-8")
-        f.write('\n{"Sender": "' + EmpfangName + '", "Message": "' + message + '", "Art": "Send"}')
-        f.close()
-        s.connect((ip, port))
-        s.send(bytes(messageTag, 'UTF-8'))
-        s.send(bytes(name, 'UTF-8'))
+    ip = empfangToIp(empfang)
+    EmpfangName = IpToName(ip)
+    global folderPath
+    f = codecs.open(folderPath+"/data/data.txt", "a", "utf-8")
+    f.write('\n{"Sender": "' + EmpfangName + '", "Message": "' + message + '", "Art": "Send"}')
+    f.close()
+    s.connect((ip, port))
+    s.send(bytes(messageTag, 'UTF-8'))
+    s.send(bytes(name, 'UTF-8'))
 
-        s.send(bytes(sep, 'UTF-8'))
-        oldMessage = message
+    s.send(bytes(sep, 'UTF-8'))
+    oldMessage = message
 
-        while True:
-            message_bytes = message[:buffer]
-            message = message[buffer:]
-            if message_bytes == "":
-                s.sendall(bytes(end, 'UTF-8'))
-                break
-            s.sendall(bytes(message_bytes, 'UTF-8'))
-        s.close()
-        return oldMessage
-    except:
-        return message
+    while True:
+        message_bytes = message[:buffer]
+        message = message[buffer:]
+        if message_bytes == "":
+            s.sendall(bytes(end, 'UTF-8'))
+            break
+        s.sendall(bytes(message_bytes, 'UTF-8'))
+    s.close()
+    return oldMessage
+    # except:
+    #     return message
 
 def answerName(empfang1, port):
         try:
@@ -206,14 +226,23 @@ def execCollector():
 
 def timeController():
     global timestamp1
+    global exitTrue
     time.sleep(5)
-    while True:
+    while (exitTrue == False):
+        if (programmende):
+            break
         now = datetime.now()
         a_timedelta = now - timestamp1
         seconds = a_timedelta.total_seconds()
         if (seconds > 10):
             print(str(now) + "||| last: "+ str(timestamp1) + "||| sec: " + str(seconds))
-            exitDelay();
+            # exitDelay();
+            if (exitTrue == False):
+                exitTrue = True
+                c = threading.Thread(target=exitDelay)
+                c.start()
+            shutdown_server()
+
         time.sleep(5)
 
 def sayIP9898():
@@ -285,8 +314,16 @@ def exitDelay():
     logoutT = threading.Thread(target=logoutIP9898)
     logoutT.start()
     logoutT.join()
+    closeServer()
+    # exit9898()
+    # print("sys.exit()")
     # time.sleep(1)
-    os.system("taskkill /F /IM python" + platform.python_version().split(".")[0] + "." + platform.python_version().split(".")[1] + ".exe")
+    # sys.exit()
+    # print("os._exit(0)")
+    # os._exit(0)
+    # print("exit()")
+    # exit()
+    # os.system("taskkill /F /IM python" + platform.python_version().split(".")[0] + "." + platform.python_version().split(".")[1] + ".exe")
 
 def empfangToIp(empfang):
     global ort
@@ -357,6 +394,17 @@ def eingabeUeberpruefung(eingabe):
             return False
     return True
 
+def sayServerName(name):
+    try:
+        s = socket.socket()
+        # s.settimeout(0.1)
+        s.connect((local_ip, 9898))
+        s.send(bytes(nameTag + sep + name + end, 'UTF-8'))
+        s.close()
+        del s
+    except:
+        x = "a"
+
 
 local_ip = getIP()
 a = threading.Thread(target=execCollector)
@@ -375,63 +423,24 @@ def index():
     global name
     global ort
     local_ip = getIP()
-    if(eingabeUeberpruefung(session["ort"]) and eingabeUeberpruefung(session["name"])):
-        if ('local_ip' in session):
-            if (session['local_ip'] == local_ip):
-                if ("name" in session):
-                    if ("ort" in session):
-                        ort = session['ort'].lower()
-                        name = session['name'].lower()
-                        try:
-                            s = socket.socket()
-                            # s.settimeout(0.1)
-                            s.connect((local_ip, 9898))
-                            s.send(bytes(nameTag + sep + name + end, 'UTF-8'))
-                            s.close()
-                            del s
-                        except:
-                            x = "a"
-                        return redirect(url_for('send'))
-        session['local_ip'] = local_ip.lower()
-        if ('name' in session):
+    data = ["Cleo-Messenger", local_ip]
+    if ('local_ip' in session):
+        if(session["local_ip"] == local_ip):
+            ort = session["ort"]
             name = session["name"]
-            if ("ort" in session):
-                ort = session['ort'].lower()
-            else:
-                ort = request.form.get("ort", "").lower()
-                session["ort"] = ort
-            try:
-                s = socket.socket()
-                # s.settimeout(0.001)
-                s.connect((local_ip, 9898))
-                s.send(bytes(nameTag + sep + name + end, 'UTF-8'))
-                s.close()
-                del s
-            except:
-                x = "a"
+            sayServerName(name)
             return redirect(url_for('send'))
-        if (request.form.get("name", "") != "" and request.form.get("ort", "") != ""):
-            ort = request.form.get("ort", "").lower()
-            session['ort'] = ort
-            name = request.form.get("name", "").lower()
-            session['name'] = name
-            try:
-                s = socket.socket()
-                # s.settimeout(0.001)
-                s.connect((local_ip, 9898))
-                s.send(bytes(nameTag + sep + name + end, 'UTF-8'))
-                s.close()
-                del s
-            except:
-                x = "a"
-            return redirect(url_for('send'))
-    f = codecs.open( folderPath+"/templates/login.html", "r", "utf-8")
-    indexContent = f.read()
-    indexContent = indexContent.replace("{title}", "Cleo-Messenger")
-    indexContent = indexContent.replace("{localIP}", local_ip)
+    if (eingabeUeberpruefung(request.form.get("ort", "").lower()) and request.form.get("ort", "") != "" and eingabeUeberpruefung(request.form.get("name", "").lower()) and request.form.get("name", "") != ""):
+        ort = request.form.get("ort", "").lower()
+        name = request.form.get("name", "").lower()
+        session["ort"] = ort
+        session["name"] = name
+        session["local_ip"] = local_ip
+        sayServerName(name)
+        return redirect(url_for('send'))
+    else:
+        return render_template("login.html", data=data)
 
-    data = ["Cleo-Messenger", session["local_ip"]]
-    return render_template("login.html", data=data)
 
 @app.route('/chat')
 def chat():
@@ -621,12 +630,33 @@ def empty():
     timestamp1 = datetime.now()
     return render_template('empty.html')
 
-@app.route('/exit')
-def exit():
-    pyautogui.hotkey('ctrl', 'w')
-    c = threading.Thread(target=exitDelay)
-    c.start()
-    return "exit"
+# @app.route('/exit')
+# def exit():
+#     global exitTrue
+#     if (exitTrue == False):
+#         exitTrue = True
+#         pyautogui.hotkey('ctrl', 'w')
+#         c = threading.Thread(target=exitDelay)
+#         c.start()
+#     return "exit"
+
+from flask import request
+def shutdown_server():
+    func = request.environ.get('werkzeug.server.shutdown')
+    if func is None:
+        raise RuntimeError('Not running with the Werkzeug Server')
+    func()
+
+@app.get('/exit')
+def shutdown():
+    global exitTrue
+    if (exitTrue == False):
+        exitTrue = True
+        pyautogui.hotkey('ctrl', 'w')
+        c = threading.Thread(target=exitDelay)
+        c.start()
+    shutdown_server()
+    return 'Server shutting down...'
 
 webbrowser.get().open_new(
         "http://localhost:9897/")
@@ -638,7 +668,7 @@ if __name__ == "__main__":
 
 # except KeyboardInterrupt:
 
-input("Terminate")
+# input("Terminate")
 
-
-os.system("taskkill /F /IM python" + platform.python_version().split(".")[0] + "." + platform.python_version().split(".")[1] + ".exe")
+# sys.exit()
+# os.system("taskkill /F /IM python" + platform.python_version().split(".")[0] + "." + platform.python_version().split(".")[1] + ".exe")
