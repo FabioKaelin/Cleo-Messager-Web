@@ -183,7 +183,7 @@ def getIP():
 def sendMessage(message, empfang, name):
     # try:
     s = socket.socket()
-    s.settimeout(0.1)
+    s.settimeout(1)
     nachricht = message
 
     ip = empfangToIp(empfang)
