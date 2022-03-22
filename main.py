@@ -184,12 +184,13 @@ def sendMessage(message, empfang, name):
     # try:
     s = socket.socket()
     s.settimeout(0.1)
+    nachricht = message
 
     ip = empfangToIp(empfang)
     EmpfangName = IpToName(ip)
     global folderPath
     f = codecs.open(folderPath+"/data/data.txt", "a", "utf-8")
-    f.write('\n{"Sender": "' + EmpfangName + '", "Message": "' + message + '", "Art": "Send"}')
+    f.write('\n{"Sender": "' + EmpfangName + '", "Message": "' + nachricht + '", "Art": "Send"}')
     f.close()
     s.connect((ip, port))
     s.send(bytes(messageTag, 'UTF-8'))
