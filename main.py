@@ -183,7 +183,7 @@ def getIP():
 def sendMessage(message, empfang, name):
     # try:
     s = socket.socket()
-    s.settimeout(1)
+    s.settimeout(0.5)
     nachricht = message
 
     ip = empfangToIp(empfang)
@@ -326,7 +326,7 @@ def exitDelay():
     # exit()
     # os.system("taskkill /F /IM python" + platform.python_version().split(".")[0] + "." + platform.python_version().split(".")[1] + ".exe")
 
-def empfangToIp(empfang):
+def empfangToIp(empfang: str):
     global ort
     f = codecs.open(folderPath+"/data/SessionIP.txt", "r", "utf-8")
     content = f.read()
@@ -388,11 +388,15 @@ def IpToName(ip):
                         return jsonObject["Name"]
     return empfang
 
-def eingabeUeberpruefung(eingabe):
+def eingabeUeberpruefung(eingabe: str):
     unerlaubtArray = ['"', "\\", sep, end, nameAnswerTag, nameTag, messageTag, exitTag, logoutTag]
     for i in unerlaubtArray:
         if i in eingabe:
             return False
+    if (eingabe == ""):
+        return False
+    if (eingabe.isspace()):
+        return False
     return True
 
 def sayServerName(name):
