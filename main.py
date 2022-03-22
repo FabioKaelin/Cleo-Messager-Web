@@ -552,7 +552,13 @@ def staticIP():
         f.close()
         content = content.replace("\r", "")
         if (len(content) < 5):
-            return render_template("staticIP.html", data=data)
+            ort = request.form.get("ort", "").lower()
+            name = request.form.get("name", "").lower()
+            ip = request.form.get("ip", "").lower()
+            f = codecs.open(folderPath+"/data/StaticIP.txt", "a", "utf-8")
+            f.write('\n{"Ort": "' + ort.lower() + '", "Name": "' + name.lower() + '", "Ip": "' + ip + '"}')
+            f.close()
+            return redirect(url_for('send'))
         contentArray = content.split("\n")
         for i in reversed(contentArray):
             if (len(i)> 5):
